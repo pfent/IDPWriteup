@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,twoside,openright,bachelor,english]{netthesis}
+\documentclass[11pt,a4paper,twoside,openright,idp,english]{netthesis}
 
 % Include common packages
 \input{pream/Packages}
@@ -11,12 +11,12 @@
 
 
 % Needed for Bachelor's theses, Master's theses and IDP
-\titlegerman{Irgendwas mit Netzwerken}
-\titleenglish{Something with Networks}
+\titlegerman{Zertifikats Verwaltungs System - Backend}
+\titleenglish{Certificate Management System - Backend}
 \submitteddate{\today}
-\author{Stephan M. G\"unther}
+\author{Philipp Fent}
 \supervisor{\NEThead}
-\advisor{Dipl.-Ing. Stephan M. G\"unther, M.\,Sc.}
+\advisor{Dr. Matthias Wachs \& Dr. Holger Kinkelin}
 
 % Additionally needed for dissertations
 \committeechair{}
@@ -26,54 +26,47 @@
 
 \begin{document}%
 
-% Makes sure that same author names are not replaced by dahes
-\bstctlcite{IEEEexample:BSTcontrol}
+    % Makes sure that same author names are not replaced by dahes
+    \bstctlcite{IEEEexample:BSTcontrol}
 
-\pagenumbering{gobble}
-\maketitle%
-
-
-\begin{abstract}
-	Abstract meta-information about something with networks.
-\end{abstract}
-\cleardoublepage
-
-\begin{otherlanguage}{ngerman}
-	\begin{abstract}
-		Abstrakte Meta-Informationen über irgendwas mit Netzwerken.
-	\end{abstract}
-\end{otherlanguage}
-\cleardoublepage
+    \pagenumbering{gobble}
+    \maketitle%
 
 
-\pagenumbering{Roman}%
+    \begin{abstract}
+        TODO: abstract
+    \end{abstract}
+    \cleardoublepage
 
-{\tableofcontents}
-{\listoffigures}
-{\listoftables}
-
-\clearpage
-\thispagestyle{empty}
-\cleardoublepage
-
-\pagenumbering{arabic}
-
-
-\subfile{include/introduction.tex}
-\subfile{include/test.tex}
-\subfile{include/conclusion.tex}
-
-$\mathbit{X}, X, 1, \mathbit{1}$
+    \begin{otherlanguage}{ngerman}
+        \begin{abstract}
+            TODO: german abstract
+        \end{abstract}
+    \end{otherlanguage}
+    \cleardoublepage
 
 
-%\subfile{include/outline.tex}
-\appendix
-%\subfile{Appendix.chap.tex}
+    \pagenumbering{Roman}%
 
-%\subfile{Nomenclature.chap.tex}
+    {\tableofcontents}
+    {\listoffigures}
+    {\listoftables}
 
-\bibliographystyle{IEEEtran}
-\bibliography{IEEEabrv,lit}
+    \clearpage
+    \thispagestyle{empty}
+    \cleardoublepage
+
+    \pagenumbering{arabic}
+
+    \subfile{include/main.tex}
+
+    \appendix
+    %\subfile{Appendix.chap.tex}
+
+    %\subfile{Nomenclature.chap.tex}
+
+    \bibliographystyle{IEEEtran}
+    \bibliography{IEEEabrv,lit}
 
 \end{document}
 

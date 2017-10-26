@@ -1,0 +1,61 @@
+\chapter{Introduction}
+insert motivation here
+\section{Goals}
+copy-pasta research questions from project proposal
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Background \& Related Work}
+\section{Background: existing certificate management system}
+
+\section{Related work}
+maybe Let's Encrypt?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Design}
+
+\section{Database Connection}
+currently only mysql, a more generalized approach would be better, e.g. to store data in an oracle database, such as TUM
+uses for its TUMonline
+
+Furthermore, mismatches between database schema and java objects are only detected during runtime, which increases
+testing overhead. This can be statically checked at compile time, which should decrease bugs and increase developer
+productivity
+
+\section{Certificate Exchange}
+Currently lacking. Several different methods:
+% TODO: cite Valentin Hauner / Beispiel_IDP_2
+HKP/SKS for OpenPGP;
+LDAP in RFC 4511, 2798 and finally RFC 4519 for the "inetOrgPerson", which contains a "userCertificate";
+DANE via the SMIMEA resource record
+
+Most widespread: LDAP, often used in an organization context
+
+\section{REST API}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Implementation}
+
+\section{Object Relational Mapper}
+static class generation to check matching models at compile time
+
+\section{Dependency Management \& Build system}
+unplanned, but needed due to fragile code base, discovered during initial developement
+\subsection{Gradle}
+\subsection{Project structure}
+\subsection{Outdated Dependency Detection} %
+via the gradle-versions-plugin
+\subsection{Global Dependency Versioning}
+previously problems with updating individual dependencies, since mismatched versions of spring etc. can lead to
+"ClassNotFoundException"s at runtime.
+
+via ext version definition, which automatically keep the versions in sync
+\subsection{Build Process Automation}
+automate creation of database schemas and dfncert dependency via gradle tasks
+
+plus automated generation of a lint report, to catch bugs during development (+ fixing currently existing bugs)
+
+\section{Certificate Publishing}
+using java openldap. implementation of a RFC 4519 compliant exchange between CMS server and LDAP server
+
+\subsection{}
+
