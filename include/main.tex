@@ -1,7 +1,39 @@
 \chapter{Introduction}
 insert motivation here
 \section{Goals}
-copy-pasta research questions from project proposal
+
+Within this project, we face several sub-questions and -problems:
+\begin{enumerate}
+    \item How should a user friendly certificate management system look like?
+    \item How can we integrate this system in existing workflows to make it as accessible as possible?
+    \item How can we manage certificates in an organization?
+    \item What challenges are we facing for certificate based authentication on embedded devices?
+\end{enumerate}
+
+In the case of this IDP, we have two distinct subprojects to answer those questions: Frontend and backend. In this
+document, we focus on issues in the backend and provide answers
+
+\subsubsection*{How should a user friendly certificate management system look like?}
+User friendliness is not only a design goal of the frontend, but also the backend. APIs, that are documented and can be
+used intuitively. Reduced complexity of setup, deployment and development, for a more user friendly solution for
+administrators and future extensions of the program. See sections ORM / dependency management.
+
+\subsubsection*{How can we integrate this system in existing workflows to make it as accessible as possible?}
+Deployment of the server as JAVA enterprise application. Java enterprise servers often available in organizations, but
+can also be run as standalone. Integration with directory services to streamline the user experience, e.g. single sign
+on. Different databases in organizations, provide abstraction from concrete database. See section Design Database
+Connection / user management.
+
+\subsubsection*{How can we manage certificates in an organization?}
+Certificates have delicate needs. Public certificate should be published by a trusted source, where the private keys
+should only be accessible by the user. However, providing a secure way to backup certificates of users is essential to
+provide a good user experience. Public stuff in public LDAP. Securely encrypted private keys in local database. See
+Certificate Publishing
+
+\subsubsection*{What challenges are we facing for certificate based authentication on embedded devices?}
+Embedded devices: Hands-off provisioning of certificates. Fully automated generation and distribution of certificates.
+Essentially included in user-friendlyness, since everything can be fully automated in the backend.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Background \& Related Work}
@@ -53,6 +85,8 @@ via ext version definition, which automatically keep the versions in sync
 automate creation of database schemas and dfncert dependency via gradle tasks
 
 plus automated generation of a lint report, to catch bugs during development (+ fixing currently existing bugs)
+
+\section{User Management}
 
 \section{Certificate Publishing}
 using java openldap. implementation of a RFC 4519 compliant exchange between CMS server and LDAP server

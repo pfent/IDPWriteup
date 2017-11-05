@@ -97,6 +97,9 @@ endef
 
 all: $(TARGET).pdf
 
+view: all
+	xdg-open $(TARGET).pdf
+
 $(TARGET).pdf: $(DOCUMENT)
 	if [ -d "figures" ]; then \
 		cd $(FIGURES) && $(MAKE); \
