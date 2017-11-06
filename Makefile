@@ -126,6 +126,7 @@ clean:
 	$(RM) -fv *.auxlock
 	$(RM) -fv *.nav
 	$(RM) -fv *.snm
+	$(RM) -fv *.pdf
 	if [ -d "figures" ]; then \
 		cd $(FIGURES) && $(MAKE) clean; \
 	fi
