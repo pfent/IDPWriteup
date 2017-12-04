@@ -1,7 +1,50 @@
 \chapter{Introduction}\label{ch:introduction}
 insert motivation here
-\section{Research questions}\label{sec:researchQuestions}
+\section{Public-Key Cryptography}\label{sec:publicKeyCryptography}
 
+"key-management problem with symmetric cryptosystems"
+
+"two different keys - one public and the other private"~\cite{schneier2007applied, diffie1976new}
+
+Public key for encryption, private for decryption.
+Private key for signature, public key for signature verification.
+
+To solve the problem of man-in-the-middle attacks, a system of trust is established.
+In this system a trusted third party verifies, that the public keys are authentic
+
+\section{Public Key Infrastructure}\label{sec:publicKeyInfrastructure}
+please refer to rfc3280
+
+\section{Certificates at TUM}\label{sec:certificatesAtTum}
+
+TUM has multiple possible ways of acquiring certificates:
+
+The "Leibniz-Rechenzentrum der Bayerischen Akademie der Wissenschaften" (LRZ in short) offers to sign
+certificates~\cite{lrzpki}, which then can be used to secure servers hosted with the LRZ, but also for e-mail security.
+The LRZ itself describes the situation as complicated, because of the "many other temporary installed solutions"
+("[da] sowohl am LRZ wie auch anderswo provisorische Lösungen installiert worden sind").
+
+TUM IT-support also offers certification services~\cite{tumZertifikat}.
+
+Additionally, TUMs Faculty of Informatics also runs a registration authority~\cite{inTumCertificates}.
+
+All three of those certification solutions are based on the CA of the Deutsches Forschungsnetz (DFN)~\cite{dfnPki}.
+So, in theory any one certification method should have the same "trust", however the certification requirements and
+procedures significantly differ.
+Furthermore, the process of generating public keys is not handled very well: LRZ provides a guide to generate keys with
+the \lstinline{openssl} command line utilities, which disqualifies a lot of the users from using the RA\@.
+The Faculty of Informatics generates the keys for their users and stores them secured with a RA generated passphrase.
+This fails one of the basic requirements of public-key cryptography, that only the user should ever have access to the
+private key.
+TUM-IT uses the DFNs webinterface to generate keys, which generates the keys in the users browser and encrypts them with
+a user provided passphrase.
+This process is a really good compromise between the ability of a layman to generate keys, while not breaking
+cryptography guidelines.
+However, this webinterface is not very accessible, especially on mobile devices and additionally completely separated
+from TUM infrastructure, such that basic integration within TUM workflows or many quality-of-life improvements can't be
+made.
+
+\section{Research Questions}\label{sec:researchQuestions}
 Within this project, we face several sub-questions and -problems:
 \begin{enumerate}
     \item How should a user friendly certificate management system look like?
@@ -65,14 +108,7 @@ Specified in RFC4880.
 \subsection{S/MIME}\label{subsec:s/mime}
 see RFC5750
 
-\section{Existing certificate management system}\label{sec:existingCertificateManagementSystem}
-
-Dr.\ Wachs et al.\ already implemented a prototype, that can be used to issue and manage certificates.
-However, our research questions are completely unanswered by this previous work.
-The previous implementation does not integrate into existing organizational structures and thus can't be considered
-usable.
-
-\section{Let's Encrypt}\label{sec:let'sEncrypt}
+\section{Let's Encrypt}\label{sec:letsEncrypt}
 
 Automatic Certificate Management Environment (ACME) specification in https://tools.ietf.org/html/draft-ietf-acme-acme-08
 
@@ -86,8 +122,16 @@ previous work to base an organizational integration on.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Design}\label{ch:design}
 
+\begin{figure}
+    \centering
+%    \includegraphics[width=0.7\textwidth, draft]{figures/system_architecture.pdf}
+    \includegraphics[width=\textwidth]{figures/system_architecture.pdf}
+    \caption{Architecture of the certificate management system}
+    \label{fig:systemArchitecture}
+\end{figure}
+
 To solve the questions, we first outline enhancements to the previous implementation and give reasoning, why those
-improve the situation w.r.t. our research questions.
+improve the situation w.r.t.\ our research questions.
 
 \section{Database Connection}\label{sec:databaseConnection}
 First task, implementing a generic database connection, that works with any database an organization wishes to use.
@@ -99,8 +143,8 @@ testing overhead.
 This can be statically checked at compile time, which should decrease bugs and increase developer productivity
 
 \section{Certificate Exchange}\label{sec:certificateExchange}
-Currently lacking. Several different methods:
-% TODO: cite Valentin Hauner / Beispiel_IDP_2
+Currently lacking.
+Several different methods~\cite{haunerIdp}:
 HKP/SKS for OpenPGP (https://sks-keyservers.net/);
 LDAP in RFC 4511, 2798 and finally RFC 4519 for the "inetOrgPerson", which contains a "userCertificate";
 DANE via the SMIMEA resource record: RFC7929
@@ -108,6 +152,19 @@ DANE via the SMIMEA resource record: RFC7929
 Most widespread: LDAP, often used in an organization context
 
 \section{REST API}\label{sec:restApi}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Existing Infrastructure}\label{ch:existingInfrastructure}
+\section{Prototype Certificate Management System}\label{sec:existingCertificateManagementSystem}
+
+Dr.\ Wachs et al.\ already implemented a prototype, that can be used to issue and manage certificates.
+However, our research questions are completely unanswered by this previous work.
+The previous implementation does not integrate into existing organizational structures and thus can't be considered
+usable.
+
+\section{TUM LDAP}\label{sec:tumLdap}
+
+\section{TUMonline}\label{sec:tumonline}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Implementation}\label{ch:implementation}
@@ -141,7 +198,7 @@ One commonly used modern alternative is Gradle, which we used to reduce the need
 be used to perform arbitrary tasks using the Apache Groovy language.
 
 See https://gradle.org/maven-vs-gradle/
-\subsection{Project structure}\label{subsec:projectStructure}
+\subsection{Project Structure}\label{subsec:projectStructure}
 \subsection{Outdated Dependency Detection}\label{subsec:outdatedDependencyDetection}
 Dependency management is a very important
 More than 25 different third-party libraries used for this project.
