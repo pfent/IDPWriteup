@@ -1,0 +1,28 @@
+\chapter{Introduction}\label{ch:introduction}
+Already in 2009 Cavoukian coined the term: "Privacy by design"~\cite{cavoukian2009privacy}.
+However in many institutions, communication happens via unencrypted email.
+This is very problematic, as personal information of users is exposed to many kinds of abuses.
+
+Designing systems, that employ privacy as a "critical enabler of trust and freedoms in our present-day information
+society"~\cite{cavoukian2009privacy} should be in the focus of any respected instituion.
+At TUM, there are some possibilities to encrypt messages between users, however none of them properly apply Cavoukians
+foundational principles.
+
+Any system, that respects the users privacy should have:
+\emph{Privacy as the Default Setting}, which is certainly not the case with even the most basic service messages being
+unencrypted.
+Furthermore, the system should be \emph{User-Centric}.
+
+Since the current systems at TUM fail those principles, the working group "secure email" set out to design a email
+encryption certificate system, that tries to move the status-quo to a more privacy by default direction.
+
+Within this project, we face several problems:
+\begin{enumerate}
+    \item How should a user friendly certificate management system look like?
+    \item How can we integrate this system in existing workflows to make it as accessible as possible?
+    \item How can we manage certificates in an organization?
+    \item What challenges are we facing for certificate based authentication on embedded devices?
+\end{enumerate}
+
+For this IDP, we decided to split the problem into frontend and backend.
+In this document, we try to solve this problem, with a slight focus on issues in the backend.

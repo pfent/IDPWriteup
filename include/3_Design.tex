@@ -1,0 +1,55 @@
+\chapter{Design}\label{ch:design}
+
+In this chapter we describe the approach and design of the of the implemented solution.
+First and foremost, a automatic certification process should avoid user interaction whenever possible.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/system_architecture.pdf}
+    \caption{Architecture of the certificate management system}
+    \label{fig:systemArchitecture}
+\end{figure}
+
+\section{User Centric features}\label{sec:userDetails}
+Certificates require some fields regarding information of the user.
+Since most of this information is readily available in organizations user identity management systems, this information
+should be used to reduce the interaction the user needs to have with the system.
+
+This identity management can also be used to authenticate the user.
+Since most institutions have already verified users identities, those systems can be used as basis of trust.
+
+However, providing a secure way to backup certificates of users is essential to provide a good user experience.
+
+\section{Integration Into Existing Systems}\label{sec:integrationIntoExistingSystems}
+User friendliness is not only a design goal of the frontend, but also the backend APIs, that are documented and can be
+used intuitively.
+Reduction of setup, deployment and development complexity, results in a intuitive for administrators and future
+extensions of the system.
+
+Another important factor is the usage of industry standard tools, such as JAVA enterprise application.
+Java enterprise servers are often already available in organizations, but can also easily be set up separately.
+Different databases in organizations, provide abstraction from concrete database.
+
+\section{Compatability With Embedded Devices}\label{sec:compatabilityWithEmbeddedDevices}
+Embedded devices: Hands-off provisioning of certificates.
+Fully scriptable generation and distribution of certificates.
+This essentially boils down to providing an API, which can be universally used.
+
+
+\section{Database Connection}\label{sec:databaseConnection}
+First task, implementing a generic database connection, that works with any database an organization wishes to use.
+Previously only MySQL was supported, a more generalized approach would be better, e.g. to store data in an oracle
+database, such as TUM uses for its TUMonline.
+
+Furthermore, mismatches between database schema and java objects are only detected during runtime, which increases
+testing overhead.
+This can be statically checked at compile time, which should decrease bugs and increase developer productivity
+
+\section{Certificate Exchange}\label{sec:certificateExchange}
+Currently lacking.
+Several different methods~\cite{haunerIdp}:
+HKP/SKS for OpenPGP (https://sks-keyservers.net/);
+LDAP in RFC 4511, 2798 and finally RFC 4519 for the "inetOrgPerson", which contains a "userCertificate";
+DANE via the SMIMEA resource record: RFC7929
+
+Most widespread: LDAP, often used in an organization context

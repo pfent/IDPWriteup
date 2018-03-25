@@ -1,0 +1,72 @@
+\chapter{Public Key Infrastructure}\label{ch:publicKeyInfrastructure}
+
+This chapter explains, how privacy in communication can be achieved and what infrastructure
+
+\section{Public-Key Cryptography}\label{sec:publicKeyCryptography}
+
+"key-management problem with symmetric cryptosystems"
+
+"two different keys - one public and the other private"~\cite{schneier2007applied, diffie1976new}
+
+Public key for encryption, private for decryption.
+Private key for signature, public key for signature verification.
+
+To solve the problem of man-in-the-middle attacks, a system of trust is established.
+In this system a trusted third party verifies, that the public keys are authentic
+
+\section{Public Key Infrastructure}\label{sec:publicKeyInfrastructure}
+please refer to RFC3280
+
+\section{Email Security}\label{sec:emailSecurity}
+
+Security of emails was not a design goal.
+Email with it's several protocols is inherently insecure.
+Several approaches to secure email, e.g. SMTP over TLS, which only secures traffic but does not provide end-to-end
+security.
+Truly confidential and authenticated messages only possible with two competing end-to-end cryptographic implementations:
+PGP and S/MIME.
+
+\subsection{PGP}\label{subsec:pgp}
+
+Pretty Good Privacy (PGP) was first implemented by Philip Zimmermann in 1991.
+Can be used for encryption and signing of data.
+See PGP user's guide.
+
+Software support, e.g. in Mozilla Thunderbird via a plugin: Enigmail
+
+OpenPGP, the modern version and de-facto standardized PGP.
+Specified in RFC4880.
+
+\subsection{S/MIME}\label{subsec:s/mime}
+see RFC5750
+
+
+\section{Certificates at TUM}\label{sec:certificatesAtTum}
+
+TUM has multiple possible ways of acquiring certificates:
+
+The "Leibniz-Rechenzentrum der Bayerischen Akademie der Wissenschaften" (LRZ in short) offers to sign
+certificates~\cite{lrzpki}, which then can be used to secure servers hosted with the LRZ, but also for e-mail security.
+The LRZ itself describes the situation as complicated, because of the "many other temporary installed solutions"
+("[da] sowohl am LRZ wie auch anderswo provisorische L\"osungen installiert worden sind").
+
+TUM IT-support also offers certification services~\cite{tumZertifikat}.
+
+Additionally, TUMs Faculty of Informatics also runs a registration authority~\cite{inTumCertificates}.
+
+All three of those certification solutions are based on the CA of the Deutsches Forschungsnetz (DFN)~\cite{dfnPki}.
+So, in theory any one certification method should have the same "trust", however the certification requirements and
+procedures significantly differ.
+Furthermore, the process of generating public keys is not handled very well: LRZ provides a guide to generate keys with
+the \lstinline{openssl} command line utilities, which disqualifies a lot of the users from using the RA\@.
+The Faculty of Informatics generates the keys for their users and stores them secured with a RA generated passphrase.
+This fails one of the basic requirements of public-key cryptography, that only the user should ever have access to the
+private key.
+TUM-IT uses the DFNs webinterface to generate keys, which generates the keys in the users browser and encrypts them with
+a user provided passphrase.
+This process is a really good compromise between the ability of a layman to generate keys, while not breaking
+cryptography guidelines.
+However, this webinterface is not very accessible, especially on mobile devices and additionally completely separated
+from TUM infrastructure, such that basic integration within TUM workflows or many quality-of-life improvements can't be
+made.
+
