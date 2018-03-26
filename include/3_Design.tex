@@ -47,9 +47,11 @@ This can be statically checked at compile time, which should decrease bugs and i
 
 \section{Certificate Exchange}\label{sec:certificateExchange}
 Currently lacking.
-Several different methods~\cite{haunerIdp}:
-HKP/SKS for OpenPGP (https://sks-keyservers.net/);
-LDAP in RFC 4511, 2798 and finally RFC 4519 for the "inetOrgPerson", which contains a "userCertificate";
-DANE via the SMIMEA resource record: RFC7929
+Several different methods~\cite{hauner2016interoperability}:
+LDAP x509 certificate fields in RFC4523~\cite{RFC4523}
+
+
+An alternative would be DNS-Based Authentication of Named Entities, as defined in RFC8162 via the SMIMEA DNS record
+For openpgp via RFC7929, however in this work, we will only concentrate on on X.509 certificates
 
 Most widespread: LDAP, often used in an organization context

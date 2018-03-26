@@ -15,7 +15,24 @@ To solve the problem of man-in-the-middle attacks, a system of trust is establis
 In this system a trusted third party verifies, that the public keys are authentic
 
 \section{Public Key Infrastructure}\label{sec:publicKeyInfrastructure}
-please refer to RFC3280
+please refer to RFC5280~\cite{RFC5280}
+
+The process of aquiring certificates is a bit involved, but well defined:
+The user first generates a key pair for assymmetric cryptography, with private and public key.
+Then they send a Certificate Signing Request (CSR) to the CA.
+This is basically a request  to the CA so as to certify the digital identity or the user.
+The CSR contains information about the applicant, like the distinguished name, their email addresses and their public
+key which needs to be signed by the matching private key.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{figures/Structure_of_X509.pdf}
+    \caption{Structure of a X.509 Certificate~\cite{jagdish2016certservice}}
+    \label{fig:x509Structure}
+\end{figure}
+
+This CSR is then used to generate a valid X.509 Certificate.
+The fields in those certificates are displayed in Figure~\ref{fig:x509Structure}.
 
 \section{Email Security}\label{sec:emailSecurity}
 
@@ -35,10 +52,10 @@ See PGP user's guide.
 Software support, e.g. in Mozilla Thunderbird via a plugin: Enigmail
 
 OpenPGP, the modern version and de-facto standardized PGP.
-Specified in RFC4880.
+Specified in RFC4880~\cite{RFC4880}.
 
 \subsection{S/MIME}\label{subsec:s/mime}
-see RFC5750
+see RFC5750~\cite{RFC5750}
 
 
 \section{Certificates at TUM}\label{sec:certificatesAtTum}
