@@ -10,6 +10,12 @@ First and foremost, a automatic certification process should avoid user interact
     \label{fig:systemArchitecture}
 \end{figure}
 
+The basic architecture is displayed in Figure~\ref{fig:systemArchitecture}.
+In our approach, a webapp handles the user interaction in a nice and user friendly way.
+This webapp can be provided by familiar user interfaces, such as TUMonline in case of our univeristy.
+The app then in turn communicates with a certification management system as backend, that can handle the certification
+components.
+
 \section{User Centric features}\label{sec:userDetails}
 Certificates require some fields regarding information of the user.
 Since most of this information is readily available in organizations user identity management systems, this information
@@ -30,28 +36,39 @@ Another important factor is the usage of industry standard tools, such as JAVA e
 Java enterprise servers are often already available in organizations, but can also easily be set up separately.
 Different databases in organizations, provide abstraction from concrete database.
 
-\section{Compatability With Embedded Devices}\label{sec:compatabilityWithEmbeddedDevices}
-Embedded devices: Hands-off provisioning of certificates.
-Fully scriptable generation and distribution of certificates.
-This essentially boils down to providing an API, which can be universally used.
-
-
-\section{Database Connection}\label{sec:databaseConnection}
-First task, implementing a generic database connection, that works with any database an organization wishes to use.
-Previously only MySQL was supported, a more generalized approach would be better, e.g. to store data in an oracle
+To implement a generic database connection we decided to use an Object Relational Mapper (ORM), that works with any
+database an organization wishes to use.
+Previously only MySQL was supported, a more generalized approach would be better, e.g.\ to store data in an oracle
 database, such as TUM uses for its TUMonline.
 
 Furthermore, mismatches between database schema and java objects are only detected during runtime, which increases
 testing overhead.
 This can be statically checked at compile time, which should decrease bugs and increase developer productivity
 
+\section{Compatability With Embedded Devices}\label{sec:compatabilityWithEmbeddedDevices}
+With the rise of the Internet of Things (IoT), many appliances have a need to communicate with users and each other.
+To also provide certificates to those devices, we envision complete hands-off provisioning of certificates on embedded
+devices.
+To enable those applications, we design our solution to be fully scriptable, complete with generation and distribution
+of certificates.
+This essentially boils down to providing an API, which can be universally used.
+Such APIs are commonly designed as Representational State Transfer (REST) systems, which we decided to use.
+
 \section{Certificate Exchange}\label{sec:certificateExchange}
-Currently lacking.
-Several different methods~\cite{hauner2016interoperability}:
-LDAP x509 certificate fields in RFC4523~\cite{RFC4523}
+One of the main features for PKI (c.f.\~\ref{sec:publicKeyInfrastructure}), the Certificate Repository also needs to be
+added, such that certificates can be published in a more generic way.
+To implement such a repository, there are several different methods, as detailed by
+Hauner~\cite{hauner2016interoperability}:
+One possibility would be to publish the certificates via the Lightweight Directory Access Protocol (LDAP).
+The specification in RFC4523~\cite{RFC4523} defines the \lstinline{userCertificate} field for X.509 Certificates.
 
+An alternative would be DNS-Based Authentication of Named Entities (DANE), as defined in RFC8162~\cite{RFC8162} via the
+SMIMEA DNS record.
+Similar to that approach, OpenPGP certificates can also be published using DANE, as defined in RFC7929~\cite{RFC7929}.
+However in this work, we will only concentrate on on X.509 certificates, but lay the foundations to future extensions
+to support OpenPGP
 
-An alternative would be DNS-Based Authentication of Named Entities, as defined in RFC8162 via the SMIMEA DNS record
-For openpgp via RFC7929, however in this work, we will only concentrate on on X.509 certificates
-
-Most widespread: LDAP, often used in an organization context
+Since there are two competing options in this case, we decided to only concentrate on the most widespread and accessible
+option in organizations: LDAP\@.
+LDAP servers are almost universally available, since most user authentification systems are based on it, most famously
+Microsoft's Active Diretory.

@@ -3,7 +3,6 @@ In this chapter, we describe the process of applying the design as described in 
 Certificate Management System.
 
 \section{Exising Prototype}\label{sec:exisingPrototype}
-
 Dr.\ Wachs et al.\ already implemented a prototype, that can be used to issue and manage certificates.
 This system can be used as basis of our work, however several key features are still lacking:
 
@@ -16,7 +15,7 @@ This made things worse than no modularization at all, since related classes were
 functionality was duplicated between modules.
 
 Also the deployment of the software was rather fragile and consisting of a combination of bash and maven files and
-separate database configration instructions, which needed to be executed in the right order.
+separate database configuration instructions, which needed to be executed in the right order.
 This resulted in a scary deployment process, which resulted in a virtual machine, which was updated every once in a
 while.
 This is obviously a bad idea, since any "Runtime Abstraction" prior to that machine was rendered useless.
@@ -27,15 +26,17 @@ error message.
 This resulted in the vast majority of unit tests being dedicated to nullability checks.
 
 Lastly, almost all user management features were not included in the overall design of the system, which already
-struggeled under its own complexity, while lacking some of the most basic features.
+struggled under its own complexity, while lacking some of the most basic features.
 
-\section{Complexity Reduction}
-
+\section{Complexity Reduction}\label{sec:complexityReduction}
+% TODO
 No RAL, only a single Spring Boot Application
 
 Bundeled competences with reduced modularization: Certificate Management System and REST-API
 
-\section{Deployment With Gradle}
+\section{Deployment With Gradle}\label{sec:deploymentWithGradle}
+% TODO: proof read
+
 Previous build automation system with Apache Maven.
 Slow build times and unflexible extensibility, which resulted in separate configuration scripts, which needed to be
 executed in the right order.
@@ -58,34 +59,47 @@ have internal dependencies themselves, commonly described as "Dependency Hell": 
 
 Especially time consuming and frustrating, since mismatched versions of the Spring Framework and dependent dependencies
 can lead to "ClassNotFoundException"s at runtime.
-This is inherently due to Javas implementation of lazily loading classes.
-(https://docs.oracle.com/javase/specs/jls/se9/jls9.pdf)
+This is inherently due to Javas implementation of lazily loading classes~\cite{gosling2014java}.
 
 Our implementation solves this, by specifying version numbers globally, which removes the possibility of "missing" to
 update one dependent version.
 This couples compatible versions of the Spring Framework and Log4J together which should automatically keep the versions
 compatible.
 
-\section{Database Versioning And Migrations}
-jOOQ plus flyway
+\section{Database Versioning And Migrations}\label{sec:databaseVersioningAndMigrations}
+While working on the database, we quickly noticed, that the database access needs severe improvement.
+Since every change in the database schema resulted in multiple changes in the breakages, all of which only happened at
+runtime.
+Since none of the existing tests actually verified the database, this only manifested at runtime in hard to debug
+crashes.
+Also, no good upgrade path is available, since there is no no versioning information available in the database.
+The jackhammer method of exporting the whole database and recreating it each time the schema is updated was quickly
+discarded.
 
-Static class generation to check matching models at compile time.
-Using Java Object Oriented Querying (jOOQ), which features an alternative Domain Specific Language (DSL) to SQL.
-Provides:
+Instead, we decided to use two industry standard dependencies: jOOQ~\cite{jooq} and flyway~\cite{flyway}
+
+The idea behind jOOQ is static class generation to check matching models at compile time and features an alternative
+Domain Specific Language (DSL) to SQL\@.
+This idea provides several advantages over classic Java Database Connectivity (JDBC) in combination with raw SQL:
 \begin{itemize}
-    \item Type safety between the database model and the java application
+    \item Type safety between the database model and the Java application
     \item Support for different databases
     \item Enterprise support if needed for enterprise databases
 \end{itemize}
 
-automate creation of database schema and migration of old data via a gradle task / dependency
+Flyway provides automate creation of database schema and migration of old data via a gradle task, that can be defined to
+automatically apply the correct migrations for the currently deployed version.
+This severely reduces the work, that needs to be done when updating the database schema.
 
-\section{Core Features}
+All in all, this makes the future development of the application much easier, since for each change to the database,
+only a single migration needs to be written.
+Subsequently, the matching database models are generated and any mismatches are immediately reported as compiler errors.
+
+\section{Core Features}\label{sec:coreFeatures}
 User authentication with LDAP.
 Two different user information approaches:
-According to RFC%TODO
 Or according to Microsofts Active Directory
 Both of which are handled via the LDAP protocol
 
-Publishing of certificates can happen via those implementations, i.e.\ publishing of RFC 4519 compliant exchange between
+Publishing of certificates can happen via those implementations, i.e.\ publishing of RFC4519~\cite{RFC} compliant exchange between
 user information.
