@@ -1,14 +1,14 @@
 \chapter{Related Work}\label{ch:relatedWork}
-One of the more recent projects, that provide encrption services is Let's Encrypt.
+One of the more recent projects, that provide encryption services is Let's Encrypt.
 The Let's Encrypt system provides a way to automatically provide x509 certificates for client to server communication,
 e.g.\ for HTTPS\@.
-This system woroks via an Automatic Certificate Management Environment (ACME), which is specified in an IETF standard
+This system works via an Automatic Certificate Management Environment (ACME), which is specified in an IETF standard
 working draft~\cite{letsencrypteacme}.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{figures/letsencryptusers.png}
-    \caption{Let's Encrypt Growth https://letsencrypt.org/stats/}
+    \caption{Let's Encrypt Growth~\cite{letsencryptstats}}
     \label{fig:letsencrypt}
 \end{figure}
 
@@ -17,10 +17,9 @@ Figure~\ref{fig:letsencrypt})
 
 However, this system is not intended for the general population, since the validation challenges aren't end-user
 focused, but mostly for webservers.
-X.509 certificates, as issued by Let's Encrypt can generally be used for email security with S/MIME.
+X.509 certificates, as issued by Let's Encrypt can generally be used for email security with S/MIM\@.
 Since this is not the focus of Let's encrypt, they also don't issue certificates, that would be usable for email
 encryption.
 
 More work about how email encryption certificates can be managed in a organization has been done by the TUM Secure
 Email and User Certification Project~\cite{hauner2016interoperability, jagdish2016certservice, straub2016directoryservice, maier2015multidevice}
-% TODO: https://www.net.in.tum.de/projects/securemail/

@@ -1,9 +1,10 @@
-\chapter{Public Key Infrastructure}\label{ch:publicKeyInfrastructure}
+\chapter{Public Key Infrastructure (PKI)}\label{ch:publicKeyInfrastructure}
 
-This chapter explains, how privacy in communication can be achieved and what infrastructure
+This chapter explains, how privacy in communication can be achieved and what infrastructure is needed to provide
+encryption certificates for users.
 
 \section{Public-Key Cryptography}\label{sec:publicKeyCryptography}
-
+%TODO
 "key-management problem with symmetric cryptosystems"
 
 "two different keys - one public and the other private"~\cite{schneier2007applied, diffie1976new}
@@ -14,7 +15,7 @@ Private key for signature, public key for signature verification.
 To solve the problem of man-in-the-middle attacks, a system of trust is established.
 In this system a trusted third party verifies, that the public keys are authentic
 
-\section{Public Key Infrastructure}\label{sec:publicKeyInfrastructure}
+\section{X.509 PKI}\label{sec:publicKeyInfrastructure}
 The problem of which public keys to trust is nowadays handled with a so called Public Key Infrastructure (PKI).
 This system consists of a combination of hard- and software, policies and procedures which organize the process of
 certificate issuing, management and revocation.
@@ -50,8 +51,6 @@ key which needs to be signed by the matching private key.
 This CSR is then used to generate a valid X.509 Certificate.
 The fields in those certificates are displayed in Figure~\ref{fig:x509Structure}.
 
-
-
 \section{Email Security}\label{sec:emailSecurity}
 
 Security of emails was not a design goal.
@@ -59,7 +58,7 @@ Email with it's several protocols is inherently insecure.
 Several approaches to secure email, e.g. SMTP over TLS, which only secures traffic but does not provide end-to-end
 security.
 Truly confidential and authenticated messages only possible with two competing end-to-end cryptographic implementations:
-PGP and S/MIME.
+PGP and S/MIME\@.
 
 \subsection{PGP}\label{subsec:pgp}
 
@@ -67,18 +66,17 @@ Pretty Good Privacy (PGP) was first implemented by Philip Zimmermann in 1991.
 Can be used for encryption and signing of data.
 See PGP user's guide.
 
-Software support, e.g. in Mozilla Thunderbird via a plugin: Enigmail
+Software support, e.g.\ in Mozilla Thunderbird via a plugin: Enigmail
 
-OpenPGP, the modern version and de-facto standardized PGP.
+OpenPGP, the modern version and de-facto standardized PGP\@.
 Specified in RFC4880~\cite{RFC4880}.
 
 \subsection{S/MIME}\label{subsec:s/mime}
 see RFC5750~\cite{RFC5750}
 
-
 \section{Certificates at TUM}\label{sec:certificatesAtTum}
-
-TUM has multiple possible ways of acquiring certificates:
+As an example, we can take a look at the existing certificate infrastructure at our own university: TUM\@.
+There are several ways of acquiring certificates:
 
 The "Leibniz-Rechenzentrum der Bayerischen Akademie der Wissenschaften" (LRZ in short) offers to sign
 certificates~\cite{lrzpki}, which then can be used to secure servers hosted with the LRZ, but also for e-mail security.
@@ -86,21 +84,26 @@ The LRZ itself describes the situation as complicated, because of the "many othe
 ("[da] sowohl am LRZ wie auch anderswo provisorische L\"osungen installiert worden sind").
 
 TUM IT-support also offers certification services~\cite{tumZertifikat}.
+This system is the preferred way to acquire certificates for users, however the process is not adapted to the TUM
+identity management, so the authentification of users needs to happen via physical verification of identity documents.
 
 Additionally, TUMs Faculty of Informatics also runs a registration authority~\cite{inTumCertificates}.
+This is certainly not a service intended for the general public, but only for members of the faculty.
 
-All three of those certification solutions are based on the CA of the Deutsches Forschungsnetz (DFN)~\cite{dfnPki}.
+All three of those certification solutions are based on the CA of the Deutsches Forschungsnetz (DFN)~\cite{dfnPki}, with
+each of the providers being a Registration Authority.
 So, in theory any one certification method should have the same "trust", however the certification requirements and
 procedures significantly differ.
 Furthermore, the process of generating public keys is not handled very well: LRZ provides a guide to generate keys with
 the \lstinline{openssl} command line utilities, which disqualifies a lot of the users from using the RA\@.
-The Faculty of Informatics generates the keys for their users and stores them secured with a RA generated passphrase.
+The Faculty of Informatics generates the keys for their users - \emph{including private keys} - and stores them secured
+with a RA generated passphrase.
 This fails one of the basic requirements of public-key cryptography, that only the user should ever have access to the
 private key.
 TUM-IT uses the DFNs webinterface to generate keys, which generates the keys in the users browser and encrypts them with
 a user provided passphrase.
 This process is a really good compromise between the ability of a layman to generate keys, while not breaking
-cryptography guidelines.
+cryptographic guidelines.
 However, this webinterface is not very accessible, especially on mobile devices and additionally completely separated
 from TUM infrastructure, such that basic integration within TUM workflows or many quality-of-life improvements can't be
 made.
