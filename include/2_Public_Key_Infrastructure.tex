@@ -4,16 +4,26 @@ This chapter explains, how privacy in communication can be achieved and what inf
 encryption certificates for users.
 
 \section{Public-Key Cryptography}\label{sec:publicKeyCryptography}
-%TODO
-"key-management problem with symmetric cryptosystems"
+The goal of public key cryptography is to solve the \say{key-management problem with symmetric
+cryptosystems}~\cite{diffie1976new}.
+The problem with symmetric cryptography was the secure exchange of identical encryption keys, that were easily
+compromised in transport.
+The mayor breakthrough of assymetric cryptography was the usage of \say{two different keys - one public and the other
+private}~\cite{schneier2007applied}, where the private key never needed to be transported.
 
-"two different keys - one public and the other private"~\cite{schneier2007applied, diffie1976new}
+In this cryptography, the public key is used for encryption and the private for decryption of messages.
+Additionally, the private key can be used to sign messages, such that anyone with the public key can verify, that the
+signature of this data was indeed issued by the corresponding private key.
 
-Public key for encryption, private for decryption.
-Private key for signature, public key for signature verification.
+Unfortunately, the public keys still need to be exchanges between users, which allows for so called man-in-the-middle
+attacks, where an attacker exchanges Alice's public key with his own.
+Bob now believes, he has Alice's public key, but actually, the middle man has broken the properties of public key
+cryptography.
 
-To solve the problem of man-in-the-middle attacks, a system of trust is established.
-In this system a trusted third party verifies, that the public keys are authentic
+To solve the problem of such man-in-the-middle attacks, a system of trust was established.
+In this system a trusted third party verifies, that the public keys are authentic.
+This can in turn be verified with cryptographic signatures again to reduce the trust to as few maunually exchanges keys
+as possible.
 
 \section{X.509 PKI}\label{sec:publicKeyInfrastructure}
 The problem of which public keys to trust is nowadays handled with a so called Public Key Infrastructure (PKI).
@@ -53,28 +63,41 @@ The fields in those certificates are displayed in Figure~\ref{fig:x509Structure}
 
 \section{Email Security}\label{sec:emailSecurity}
 
-Security of emails was not a design goal.
-Email with it's several protocols is inherently insecure.
-Several approaches to secure email, e.g. SMTP over TLS, which only secures traffic but does not provide end-to-end
-security.
-Truly confidential and authenticated messages only possible with two competing end-to-end cryptographic implementations:
-PGP and S/MIME\@.
+Emails, as defined in in RFC5322~\cite{RFC5322}, are unencrypted.
+This is largely caused by the fact, that emails are somewhat a relic from ancient times of the internet, already
+defined in 1977 as \say{ARPA NETWORK TEXT MESSAGES}~\cite{RFC0733}.
+Since the message format has not changed dramatically since then, modern emails follow the same plain text structure.
+
+Furthermore, the several associated protocols were inherently insecure, but have since received updates to use transport
+encryption, like SMTP over TLS~\cite{RFC3207}.
+Since this encryption is only a transport encryption, i.e.\ the message itself is transmitted encrypted over the wire,
+but decrypted on each mail server, those attempts do not provide end-to-end security.
+Truly confidential and authenticated messages are only possible using one of two competing end-to-end cryptographic
+implementations, that operate on top of email: PGP or S/MIME\@.
 
 \subsection{PGP}\label{subsec:pgp}
+Pretty Good Privacy (PGP) was first implemented by Philip Zimmermann in 1991~\cite{zimmermann1995official}.
+PGP was one of the first readily available systems implementing public key cryptography.
+PGP can be used for the most public key cryptography applications, like privacy, authentication, and digital signatures.
 
-Pretty Good Privacy (PGP) was first implemented by Philip Zimmermann in 1991.
-Can be used for encryption and signing of data.
-See PGP user's guide.
-
-Software support, e.g.\ in Mozilla Thunderbird via a plugin: Enigmail
-
-OpenPGP, the modern version and de-facto standardized PGP\@.
-Specified in RFC4880~\cite{RFC4880}.
+The modern variant of this software is open source and called OpenPGP\@.
+It is the de-facto standard for PGP messages, but the message format was also formally specified in
+RFC4880~\cite{RFC4880}.
+Software support for PGP is usually good, e.g.\ in Mozilla Thunderbird via a plugin called \say{Enigmail}, but not
+directly included.
 
 \subsection{S/MIME}\label{subsec:s/mime}
-see RFC5750~\cite{RFC5750}
+S/MIME are the Secure/Multipurpose Internet Mail Extensions for signing MIME data and general encryption.
+Initially, the format was defined by the RSA Data Security Inc.
+But nowadays, the standard is also defined in an RFC, number 5750~\cite{RFC5750}.
+
+In comparison to OpenPGP, most commonly used email clients, like Thunderbird, Microsoft's Outlook, and Apple Mail
+support S/MIME without further plugins.
+This makes S/MIME the most comfortable way to secure emails for users.
+We will therefore focus on S/MIME in this work.
 
 \section{Certificates at TUM}\label{sec:certificatesAtTum}
+Certificate management in larger organizations is usually complex and confusing for the non technical user.
 As an example, we can take a look at the existing certificate infrastructure at our own university: TUM\@.
 There are several ways of acquiring certificates:
 
@@ -107,4 +130,3 @@ cryptographic guidelines.
 However, this webinterface is not very accessible, especially on mobile devices and additionally completely separated
 from TUM infrastructure, such that basic integration within TUM workflows or many quality-of-life improvements can't be
 made.
-

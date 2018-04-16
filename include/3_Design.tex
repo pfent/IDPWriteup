@@ -5,14 +5,14 @@ First and foremost, a automatic certification process should avoid user interact
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{figures/system_architecture.pdf}
+    \includegraphics[width=.8\textwidth]{figures/test.pdf} % TODO see jagdish2016certservice
     \caption{Architecture of the certificate management system}
     \label{fig:systemArchitecture}
 \end{figure}
 
 The basic architecture is displayed in Figure~\ref{fig:systemArchitecture}.
-In our approach, a webapp handles the user interaction in a nice and user friendly way.
-This webapp can be provided by familiar user interfaces, such as TUMonline in case of our univeristy.
+In our approach, a web application handles the user interaction in a nice and user friendly way.
+This webapp can be provided by familiar user interfaces, such as TUMonline in case of our university.
 The app then in turn communicates with a certification management system as backend, that can handle the certification
 components.
 
@@ -32,16 +32,16 @@ used intuitively.
 Reduction of setup, deployment and development complexity, results in a intuitive for administrators and future
 extensions of the system.
 
-Another important factor is the usage of industry standard tools, such as JAVA enterprise application.
+Another important factor is the usage of industry standard tools, such as Java enterprise application.
 Java enterprise servers are often already available in organizations, but can also easily be set up separately.
 Different databases in organizations, provide abstraction from concrete database.
 
 To implement a generic database connection we decided to use an Object Relational Mapper (ORM), that works with any
 database an organization wishes to use.
-Previously only MySQL was supported, a more generalized approach would be better, e.g.\ to store data in an oracle
+Previously only MySQL was supported, a more generalized approach would be better, e.g.\ to store data in an Oracle
 database, such as TUM uses for its TUMonline.
 
-Furthermore, mismatches between database schema and java objects are only detected during runtime, which increases
+Furthermore, mismatches between database schema and Java objects are only detected during runtime, which increases
 testing overhead.
 This can be statically checked at compile time, which should decrease bugs and increase developer productivity
 
@@ -55,7 +55,7 @@ This essentially boils down to providing an API, which can be universally used.
 Such APIs are commonly designed as Representational State Transfer (REST) systems, which we decided to use.
 
 \section{Certificate Exchange}\label{sec:certificateExchange}
-One of the main features for PKI (c.f.\~\ref{sec:publicKeyInfrastructure}), the Certificate Repository also needs to be
+One of the main features for PKI (c.f.~\ref{sec:publicKeyInfrastructure}), the Certificate Repository also needs to be
 added, such that certificates can be published in a more generic way.
 To implement such a repository, there are several different methods, as detailed by
 Hauner~\cite{hauner2016interoperability}:
@@ -71,4 +71,4 @@ to support OpenPGP
 Since there are two competing options in this case, we decided to only concentrate on the most widespread and accessible
 option in organizations: LDAP\@.
 LDAP servers are almost universally available, since most user authentification systems are based on it, most famously
-Microsoft's Active Diretory.
+Microsoft's Active Directory.

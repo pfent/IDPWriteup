@@ -66,7 +66,7 @@ endef
 
 define run-bibtex
   $(call msgcompile,$(BIBTEX),$(call getaux,$(1))); \
-  $(BIBTEX) $(BIB_FLAGS) $(call getaux,$(1)) 1>/dev/null 2>&1 || \
+  $(BIBTEX) $(BIB_FLAGS) $(call getaux,$(1))  || \
     $(call msgfail)
 endef
 
