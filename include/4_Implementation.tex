@@ -18,10 +18,10 @@ Also the deployment of the software was rather fragile and consisting of a combi
 separate database configuration instructions, which needed to be executed in the right order.
 This resulted in a scary deployment process, which resulted in a virtual machine, which was updated every once in a
 while.
-This is obviously a bad idea, since any "Runtime Abstraction" prior to that machine was rendered useless.
+This is obviously a bad idea, since any \say{Runtime Abstraction} prior to that machine was rendered useless.
 
-Furthermore, when looking at the JAVA code, no clear lines of input validation were clear.
-Almost every class had their own nullpointer checks, and returning null themselves in error cases and only logging the
+Furthermore, when looking at the Java code, no clear lines of input validation were clear.
+Almost every class had their own null pointer checks, and returning null themselves in error cases and only logging the
 error message.
 This resulted in the vast majority of unit tests being dedicated to nullability checks.
 
@@ -32,13 +32,13 @@ struggled under its own complexity, while lacking some of the most basic feature
 % TODO
 No RAL, only a single Spring Boot Application
 
-Bundeled competences with reduced modularization: Certificate Management System and REST-API
+Bundled competences with reduced modularization: Certificate Management System and REST-API
 
 \section{Deployment With Gradle}\label{sec:deploymentWithGradle}
 % TODO: proof read
 
 Previous build automation system with Apache Maven.
-Slow build times and unflexible extensibility, which resulted in separate configuration scripts, which needed to be
+Slow build times and inflexible extensibility, which resulted in separate configuration scripts, which needed to be
 executed in the right order.
 Integration of modern web development frameworks for the frontend also only available for alternative systems, would
 result in additional configuration effort.
@@ -51,17 +51,17 @@ More than 25 different third-party libraries used for this project.
 Updating those dependencies is necessary for security updates, especially in a security oriented application, handling
 sensitive information of users and responsible to secure certificates.
 
-Outdated dependencies can be detected via the "gradle-versions-plugin", which displays the newest available versions
+Outdated dependencies can be detected via the \say{gradle-versions-plugin}, which displays the newest available versions
 from open-source repositories. %TODO: example output of that plugin?
 
 While handling the dependency updates, we noticed problems with updating individual dependencies, since the dependencies
-have internal dependencies themselves, commonly described as "Dependency Hell": %https://en.wikipedia.org/wiki/Dependency_hell
+have internal dependencies themselves, commonly described as \say{Dependency Hell}: %https://en.wikipedia.org/wiki/Dependency_hell
 
 Especially time consuming and frustrating, since mismatched versions of the Spring Framework and dependent dependencies
-can lead to "ClassNotFoundException"s at runtime.
+can lead to a \lstinline{ClassNotFoundException} at runtime.
 This is inherently due to Javas implementation of lazily loading classes~\cite{gosling2014java}.
 
-Our implementation solves this, by specifying version numbers globally, which removes the possibility of "missing" to
+Our implementation solves this, by specifying version numbers globally, which removes the possibility of \say{missing} to
 update one dependent version.
 This couples compatible versions of the Spring Framework and Log4J together which should automatically keep the versions
 compatible.
@@ -96,10 +96,12 @@ only a single migration needs to be written.
 Subsequently, the matching database models are generated and any mismatches are immediately reported as compiler errors.
 
 \section{Core Features}\label{sec:coreFeatures}
-User authentication with LDAP.
+User authentication with LDAP. % TODO
 Two different user information approaches:
-Or according to Microsofts Active Directory
+Or according to Microsoft's Active Directory
 Both of which are handled via the LDAP protocol
 
-Publishing of certificates can happen via those implementations, i.e.\ publishing of RFC4519~\cite{RFC4519} compliant exchange between
-user information.
+Publishing of certificates can happen via those implementations, i.e.\ publishing of RFC4519~\cite{RFC4519} compliant
+exchange between user information.
+
+Automatic approval of certificates.

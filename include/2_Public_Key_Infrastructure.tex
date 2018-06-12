@@ -22,7 +22,7 @@ cryptography.
 
 To solve the problem of such man-in-the-middle attacks, a system of trust was established.
 In this system a trusted third party verifies, that the public keys are authentic.
-This can in turn be verified with cryptographic signatures again to reduce the trust to as few maunually exchanges keys
+This can in turn be verified with cryptographic signatures again to reduce the trust to as few manually exchanges keys
 as possible.
 
 \section{X.509 PKI}\label{sec:publicKeyInfrastructure}
@@ -38,22 +38,22 @@ This formal model defines several key elements:
     \item Certificate Authority (CA) - The entity which has the authority to issue certificates.
     A CA is an anchor of trust in the PKI and can sign certificates to bind public keys to End Entities.
     \item Registration Authority (RA) - An optional entity, to which CAs can transfer many administrative functions.
-    \item Certificate Revokation List (CRL) - A list, which contains all revoked certificates, which should no longer be
+    \item Certificate Revocation List (CRL) - A list, which contains all revoked certificates, which should no longer be
     used, but which validity dates have not expired, yet.
     \item Certificate Repository - A database or directory service, which can be used to get certificates belonging to
     End Entities.
 \end{itemize}
 
-The process of aquiring certificates is a bit involved, but well defined:
-The user first generates a key pair for assymmetric cryptography, with private and public key.
-Then they send a Certificate Signing Request (CSR) to the CA.
+The process of acquiring certificates is a bit involved, but well defined:
+The user first generates a key pair for asymmetric cryptography, with private and public key.
+Then they send a Certificate Signing Request (CSR) to the CA\@.
 This is basically a request to the CA so as to certify the digital identity or the user.
 The CSR contains information about the applicant, like the distinguished name, their email addresses and their public
 key which needs to be signed by the matching private key.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\textwidth]{figures/Structure_of_X509.pdf}
+    \includegraphics[width=0.3\textwidth]{figures/Structure_of_X509.pdf}
     \caption{Structure of a X.509 Certificate~\cite{jagdish2016certservice}}
     \label{fig:x509Structure}
 \end{figure}
@@ -108,12 +108,12 @@ The LRZ itself describes the situation as complicated, because of the "many othe
 
 TUM IT-support also offers certification services~\cite{tumZertifikat}.
 This system is the preferred way to acquire certificates for users, however the process is not adapted to the TUM
-identity management, so the authentification of users needs to happen via physical verification of identity documents.
+identity management, so the authentication of users needs to happen via physical verification of identity documents.
 
 Additionally, TUMs Faculty of Informatics also runs a registration authority~\cite{inTumCertificates}.
 This is certainly not a service intended for the general public, but only for members of the faculty.
 
-All three of those certification solutions are based on the CA of the Deutsches Forschungsnetz (DFN)~\cite{dfnPki}, with
+All three of those certification solutions are based on the CA of the Deutsches For\-schungs\-netz (DFN)~\cite{dfnPki}, with
 each of the providers being a Registration Authority.
 So, in theory any one certification method should have the same "trust", however the certification requirements and
 procedures significantly differ.
@@ -123,10 +123,10 @@ The Faculty of Informatics generates the keys for their users - \emph{including 
 with a RA generated passphrase.
 This fails one of the basic requirements of public-key cryptography, that only the user should ever have access to the
 private key.
-TUM-IT uses the DFNs webinterface to generate keys, which generates the keys in the users browser and encrypts them with
+TUM-IT uses the DFNs web interface to generate keys, which generates the keys in the users browser and encrypts them with
 a user provided passphrase.
 This process is a really good compromise between the ability of a layman to generate keys, while not breaking
 cryptographic guidelines.
-However, this webinterface is not very accessible, especially on mobile devices and additionally completely separated
+However, this web interface is not very accessible, especially on mobile devices and additionally completely separated
 from TUM infrastructure, such that basic integration within TUM workflows or many quality-of-life improvements can't be
 made.
