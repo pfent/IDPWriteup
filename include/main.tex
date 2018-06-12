@@ -8,12 +8,30 @@
 
 \subfile{include/4_Implementation.tex}
 
+\chapter{Conclusion}\label{ch:conclusion}
+% TODO
+Encrypting email is very important.
+
+Enabling users to use encryption requires tight integration into existing workflows.
+
+Requirements for a DFN RA are already met, since all users of TUM's identity management have their identity checked.
+Employees need to show their passport when applying for a contract.
+Students need to upload a copy of their passport when applying for their program.
+The only reasons blocking a roll-out of an automatic and universal certificate management system are or political
+nature.
+
+The CMS should also generalize very well to arbitrary organizations, since all required components for integration are
+very common.
+User authentication in the vast majority of organizations is covered by support for LDAP and Active Directory.
+Automatic certificate approval be covered by requirements to check identities, that are usually present for health
+insurances, either for employees or at the moment of matriculation.
+
 \chapter{Future Work}\label{ch:futureWork}
 
 Future work includes actual deployment of the system.
-This requires aquisition of an actual certificate authority, that is trusted by clients.
+This requires acquisition of an actual certificate authority, that is trusted by clients.
 
-Integration into existing infrastructure at TUM also needs to happen, e.g.\ into the Campusonline instance, which should
+Integration into existing infrastructure at TUM also needs to happen, e.g.\ into the CAMPUSonline instance, which should
 allow to run JAVA applications
 
 And last but not least the security of the implementations should be independently audited.
