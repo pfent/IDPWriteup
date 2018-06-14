@@ -1,5 +1,13 @@
 \chapter{Related Work}\label{ch:relatedWork}
-One of the more recent projects, that provide encryption services is Let's Encrypt.
+% TODO: many certificate authorities also provide client email certificates:
+% https://www.comodo.com/home/email-security/free-email-certificate.php
+% https://www.digicert.com/client-certificates/
+% https://www.globalsign.com/de-de/sichere-email/
+% some even provide active directory integration / (aka managed PKI)
+% however, none of them truly open-source, which should be a major requirement for all encryption (cf. Kerckhoffs' principle, cite schneier2007applied)
+% and are priced at approximately 10€ per user, which turns out to be rather expensive for organizations such as TUM, with approx. 42k members.
+
+A more recent project, providing encryption services is Let's Encrypt.
 The Let's Encrypt system provides a way to automatically provide x509 certificates for client to server communication,
 e.g.\ for HTTPS\@.
 This system works via an Automatic Certificate Management Environment (ACME), which is specified in an IETF standard

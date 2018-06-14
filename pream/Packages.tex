@@ -42,6 +42,20 @@
 
 % listings
 \usepackage{listings}
+\lstset{basicstyle=%
+\ttfamily%
+\linespread{1}%
+\lst@ifdisplaystyle\scriptsize\fi,
+numberstyle=\scriptsize\color{gray},
+numbers=left,
+frame=lines,
+framerule=.5pt,
+belowcaptionskip=3pt,
+language=java,
+keywordstyle=\color{TUMDarkerBlue},
+commentstyle=\color{black!60},
+otherkeywords={byte,size_t,uint8_t,uint64_t,v4df,v8sf,constexpr},
+}
 
 % drawing and graphics
 \usepackage{tumcolors}

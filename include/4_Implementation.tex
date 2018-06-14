@@ -34,6 +34,21 @@ No RAL, only a single Spring Boot Application
 
 Bundled competences with reduced modularization: Certificate Management System and REST-API
 
+% TODO: cite https://en.wikipedia.org/wiki/Design_by_contract#cite_note-3
+Applied the design by contract methodology, to reduce the overall \lstinline{null} handling.
+Around 50\% of all tests were focused on handling nullable types, ensuring null input produces null output and
+generally, that errors result in null values.
+However, since for almost all cases, null values indicate input errors and should not propagate throughout the entire
+system.
+We therefore eliminated most usages of null and used Java Annotations, supporting nullability contracts
+(\lstinline{@Nullable} or \lstinline{@NotNull}).
+This way, the overall number of paths through the code is reduced significantly reduced and all input verification is
+actually handled at the time of input, which additionally provides much better error messages.
+
+Additionally, many errors caused by violated assertions, i.e.\ programming errors, now cause exceptions.
+Exceptions have the advantage to fail hard, instead of generating propagating null values and actually be logged,
+instead of being swallowed by generic null handling code.
+
 \section{Deployment With Gradle}\label{sec:deploymentWithGradle}
 % TODO: proof read
 
@@ -52,7 +67,29 @@ Updating those dependencies is necessary for security updates, especially in a s
 sensitive information of users and responsible to secure certificates.
 
 Outdated dependencies can be detected via the \say{gradle-versions-plugin}, which displays the newest available versions
-from open-source repositories. %TODO: example output of that plugin?
+from open-source repositories.
+% TODO: an example, how outdated libraries are reported is shown in the listing below
+
+\begin{lstlisting}
+$ gradle dependencyUpdates
+------------------------------------------------------------
+: Project Dependency Updates (report to plain text file)
+------------------------------------------------------------
+
+The following dependencies are using the latest integration version:
+- org.apache.directory.server:apacheds-all:2.0.0-M24
+- dfncert:client:1.9.1
+- io.jsonwebtoken:jjwt:0.9.0
+[...]
+
+The following dependencies have later milestone versions:
+- org.bouncycastle:bcmail-jdk15on [1.56 -> 1.59]
+- org.bouncycastle:bcpg-jdk15on [1.56 -> 1.59]
+- org.mariadb.jdbc:mariadb-java-client [2.2.3 -> 2.2.5]
+[...]
+\end{lstlisting}
+
+% TODO: This enables periodic builds, e.g. on a continous integration server to auotmatically detect security updates
 
 While handling the dependency updates, we noticed problems with updating individual dependencies, since the dependencies
 have internal dependencies themselves, commonly described as \say{Dependency Hell}: %https://en.wikipedia.org/wiki/Dependency_hell
@@ -82,9 +119,9 @@ The idea behind jOOQ is static class generation to check matching models at comp
 Domain Specific Language (DSL) to SQL\@.
 This idea provides several advantages over classic Java Database Connectivity (JDBC) in combination with raw SQL:
 \begin{itemize}
-    \item Type safety between the database model and the Java application
-    \item Support for different databases
-    \item Enterprise support if needed for enterprise databases
+\item Type safety between the database model and the Java application
+\item Support for different databases
+\item Enterprise support if needed for enterprise databases
 \end{itemize}
 
 Flyway provides automate creation of database schema and migration of old data via a gradle task, that can be defined to
