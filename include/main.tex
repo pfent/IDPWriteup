@@ -1,12 +1,33 @@
-\subfile{include/0_Intro.tex}
+\begin{abstract}
+    \input{include/abstract-en}
+\end{abstract}
 
-\subfile{include/1_Related_Work.tex}
+\begin{otherlanguage}{ngerman}
+    \begin{abstract}
+        \input{include/abstract-de}
+    \end{abstract}
+\end{otherlanguage}
 
-\subfile{include/2_Public_Key_Infrastructure.tex}
+\setcounter{tocdepth}{1}
+\tableofcontents
+\listoffigures
+\begingroup
+\let\clearpage\relax
+\listoftables
+\lstlistoflistings
+\endgroup
 
-\subfile{include/3_Design.tex}
+\startcontent
 
-\subfile{include/4_Implementation.tex}
+\input{include/0_Intro.tex}
+
+\input{include/1_Related_Work.tex}
+
+\input{include/2_Public_Key_Infrastructure.tex}
+
+\input{include/3_Design.tex}
+
+\input{include/4_Implementation.tex}
 
 \chapter{Conclusion}\label{ch:conclusion}
 % TODO
@@ -38,3 +59,8 @@ And last but not least the security of the implementations should be independent
 Since this system is critical for users trust and freedom, no corners should be cut.
 Focus of this work was not the security of the application and questions like, what fields in users certificates are
 allowed, were not answered in this work.
+
+\pagestyle{thesischapter}
+\cleardoublepage
+\setquotestyle{english}
+\printbibliography[heading=bibintoc]

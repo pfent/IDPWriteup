@@ -1,6 +1,7 @@
 .idea/
 *.iml
 examples/
+build/
 *.aux
 *.bbl
 *.blg

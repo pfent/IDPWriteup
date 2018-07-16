@@ -1,74 +1,126 @@
-\documentclass[11pt,a4paper,twoside,openright,idp,english]{netthesis}
+\documentclass[IN,11pt,twoside,openright,idp,english]{tumthesis}
 
 % Include common packages
-\input{pream/Packages}
+\usepackage{packages}
 
-% Maybe we want to inlcude some additional packages
+% IEEE tools for tweaking bib style
+\usepackage{IEEEtrantools}
+
+\newcommand\toc{\relax}
+
+\usepackage[natbib=true,backend=bibtex]{biblatex}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{tabu}
+\usepackage{ltxtable}
+\usepackage{url}
+\usepackage[style=base]{caption}
+\captionsetup{%
+font={footnotesize},
+labelfont={sc},
+}
+\captionsetup[subfloat]{%
+font={footnotesize},
+labelfont={rm},
+}
+\usepackage{subfig}
+\usepackage{nicefrac}
+\usepackage{longtable}
+\usepackage[hang]{footmisc}
+\usepackage{acro}
 \usepackage{dirtytalk}
+% See issue: https://bitbucket.org/cgnieder/acro/issues/96/acro-package-provides-missing-number
+\ExplSyntaxOn
 
-% hyphenation
-\hyphenation{op-ti-cal net-work net-works semi-con-duc-tor tech-nique tech-niques}
+\cs_undefine:N\__acro_declare_long:nn
+\acro_declare_property:nnn {long} {long}
+{
+\acro_for_endings_do:n
+{ \prop_put:cnn {l__acro_long_##1_form_prop} {#1} { \c_false_bool } }
+\prop_put:NnV \l__acro_long_indefinite_prop
+{#1}
+\l__acro_default_indefinite_tl
+\acro_for_endings_do:n
+{
+\bool_if_exist:cTF {l__acro_#1_long-##1_set_bool}
+{
+\bool_if:cF {l__acro_#1_long-##1_set_bool}
+{
+\prop_put:cnv {l__acro_long_##1_prop} {#1} {l__acro_default_long_##1_tl}
+}
+}
+{
+\prop_put:cnv {l__acro_long_##1_prop} {#1} {l__acro_default_long_##1_tl}
+}
+}
+}
 
+\ExplSyntaxOff
+\setlength\footnotemargin{5pt}
+
+\usepackage{mdframed}
+\newlength{\charwidth}
+\setlength{\charwidth}{\widthof{\scriptsize\texttt{x}}}
+
+\makeatletter
+\newenvironment{moeplstborder}[2][]{%
+\ifx#1\@empty\@empty%
+\edef\@margin{-1.5\baselineskip}%
+\else%
+\edef\@margin{#1}%
+\fi%
+\vspace{-\baselineskip}
+\begin{center}
+\begin{minipage}{#2}
+\begin{mdframed}[%
+topline=false,leftline=false,bottomline=false,rightline=true,
+linecolor=TUMRed!20,linewidth=\charwidth,
+innertopmargin=\@margin,innerbottommargin=-0.5\baselineskip,
+innerleftmargin=0pt,innerrightmargin=-\charwidth,
+userdefinedwidth=#2,
+]%
+}%
+{%
+\end{mdframed}%
+\end{minipage}
+\end{center}
+}%
+\makeatother
 
 % Needed for Bachelor's theses, Master's theses and IDP
 \titlegerman{Zertifikats Verwaltungs System - Backend}
 \titleenglish{Certificate Management System - Backend}
-\submitteddate{\today}
-\author{Philipp Fent}
+\author{Philipp~Fent}
 \supervisor{\NEThead}
-\advisor{Dr. Matthias Wachs \& Dr. Holger Kinkelin}
+\assistants{Dr.~Matthias~Wachs \& Dr.~Holger~Kinkelin}
+\courseofstudy{Informatics}
+\date{August 15, 2018}
+\location{Garching}
 
-% Additionally needed for dissertations
-\committeechair{}
-\committeeexaminers{}{}{}
-\accepteddate{}
+\setcounter{tocdepth}{2}
 
+\addbibresource{bib/bibliography.bib}
+
+% Load late to avoid same identifier warning
+\usepackage[colorlinks=false,pdfborder={0 0 0}]{hyperref}
+\usepackage[noabbrev]{cleveref}
 
 \begin{document}%
 
-    % Makes sure that same author names are not replaced by dahes
-    \bstctlcite{IEEEexample:BSTcontrol}
+% Makes sure that same author names are not replaced by dahes
+\bstctlcite{IEEEexample:BSTcontrol}
 
-    \pagenumbering{gobble}
-    \maketitle%
+\pagenumbering{gobble}
+\maketitle%
+\cleardoublepage
 
+\input{include/main}
 
-    \begin{abstract}
-        TODO: abstract
-    \end{abstract}
-    \cleardoublepage
-
-    \begin{otherlanguage}{ngerman}
-        \begin{abstract}
-            TODO: german abstract
-        \end{abstract}
-    \end{otherlanguage}
-    \cleardoublepage
-
-
-    \pagenumbering{Roman}%
-
-    {\tableofcontents}
-    {\listoffigures}
-    {\listoftables}
-
-    \clearpage
-    \thispagestyle{empty}
-    \cleardoublepage
-
-    \pagenumbering{arabic}
-
-    \subfile{include/main.tex}
-
-    \appendix
-    %\subfile{Appendix.chap.tex}
-
-    %\subfile{Nomenclature.chap.tex}
-
-    \bibliographystyle{IEEEtran}
-    \bibliography{IEEEabrv,lit}
+%\cleardoublepage
+\clearpage
+\pagestyle{empty}
+%\mbox{}
+%\clearpage
 
 \end{document}
-
-% vim: set sw=4 ts=4 et tw=72 :
-

@@ -1,29 +1,68 @@
+# The grand unified latex makefile
+# or
+# building latex is easy
+
+# (2016) Johannes Naab <naab@net.in.tum.de>
+# Originally based on work by
+# Stephan Günther <guenther@tum.de>
+# Maximilian Riemensberger <riemensberger@tum.de>
+
+# Approach for dependency tracking taken from https://github.com/shiblon/latex-makefile
+# Concept for fix point iteration on input files by https://github.com/aclements/latexrun
+
+# extension and configuration go into Makefile.conf.mk
+
+# All hope abandon ye who enter here
+
+VERSION = 20170823.0
+
+# make feature flags
+.SECONDARY:
+
 .SILENT :
-.PHONY  : all
+.SECONDEXPANSION:
 
-# Makefile.inc should only include the document's main tex file and the target
-# name, e.g.
-# DOCUMENT := slides.tex
-# TARGET := slides
-include Makefile.inc
+# output-sync supported since 4.0, which is not in OS X
+# version check from https://lists.gnu.org/archive/html/help-make/2006-04/msg00065.html
+# disabling built-in rules and variables only works properly since 4.0
+ifeq (4.0,$(firstword $(sort $(MAKE_VERSION) 4.0)))
+	MAKEFLAGS += -r -R -Oline
+endif
 
-DOCUMENT += $(wildcard include/*.tex)
-FIGURES  := figures
-RELEASE_FILENAME := $(TARGET)
+FIGUREDIR := figures
+BUILDDIR := build
+.DEFAULT_GOAL := all
 
-PDFLATEX ?= $(shell which pdflatex)
-BIBTEX ?= $(shell which bibtex)
-DIFF ?= $(shell which diff)
-GREP ?= $(shell which grep)
-AWK ?= $(shell which awk)
-MKDIR ?= $(shell which mkdir)
-TOUCH ?= $(shell which touch)
-TAR ?= $(shell which tar)
-RM ?= $(shell which rm)
-RMDIR ?= $(shell which rmdir)
+CURDIRBASE := $(notdir $(CURDIR))
+RELEASE_FILENAME := $(CURDIRBASE).tar.gz
 
-PDFLATEX_FLAGS	:= -interaction=nonstopmode
-GREP_FLAGS += -E -B 0 -A 2
+PDFLATEX ?= pdflatex
+BIBTEX ?= bibtex
+DIFF ?= diff
+GREP ?= grep
+AWK ?= awk
+LS ?= ls
+MV ?= mv
+SED ?= sed
+UNIQ ?= uniq
+SORT ?= sort
+FIND ?= find
+TAR ?= tar
+TOUCH ?= touch
+OPENSSL ?= openssl
+CMP ?= cmp
+XARGS ?= xargs
+TR ?= tr
+
+# http://stackoverflow.com/a/12099167
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+	TAROPTS = --no-recursion
+endif
+ifeq ($(UNAME_S),Darwin)
+	TAROPTS = -n
+endif
+
 
 # terminal colors
 ifneq ($(COLORTERM),false)
@@ -48,109 +87,295 @@ else
   BOLD := ""
 endif
 
-# helper functions for filename conversion
-getname = $(firstword $(subst ., ,$(1)))
-getaux = $(call getname,$(1)).aux
+-include Makefile.conf.mk
+
+# skip linebreaks in the log file
+export max_print_line=254
+export error_line=254
+export half_error_line=127
+
+PDFLATEX_FLAGS += -interaction=batchmode -recorder -file-line-error
+GREP_FLAGS += -E -B 2 -A 3
+
+TEXINPUTS := .:$(CURDIR):$(TEXINPUTS)
+export TEXINPUTS
+BIBINPUTS := .:$(CURDIR):$(BIBINPUTS)
+export BIBINPUTS
+
+FIGURESTEXSRC += $(filter-out $(SKIP),$(wildcard $(FIGUREDIR)/*.tex))
+FIGURESTEXPDF := $(FIGURESTEXSRC:.tex=.pdf)
+FIGURESTIKZSRC += $(filter-out $(SKIP),$(wildcard $(FIGUREDIR)/*.tikz))
+FIGURESTIKZPDF := $(filter-out $(FIGURESTEXPDF),$(FIGURESTIKZSRC:.tikz=.pdf))
+FIGURESRC := $(FIGURESTEXSRC) $(FIGURESTIKZSRC)
+FIGUREPDF := $(FIGURESTEXPDF) $(FIGURESTIKZPDF)
+
+ALLFIGURESTIKZPDF := $(FIGURESTIKZPDF)
+ALLFIGURESTEXPDF := $(FIGURESTEXPDF)
+
+FIGURESUBDIRS := $(wildcard $(FIGUREDIR)/*/)
+FIGURESUBDIRSTEMS := $(FIGURESUBDIRS:$(FIGUREDIR)/%/=%)
+
+define template_FIGURESPDF
+ FIGURESTEXSRC_$(1) += $$(filter-out $$(SKIP),$$(wildcard $$(FIGUREDIR)/$(1)/*.tex))
+ FIGURESTEXPDF_$(1) := $$(FIGURESTEXSRC_$(1):.tex=.pdf)
+ FIGURESTIKZSRC_$(1) += $$(filter-out $$(SKIP),$$(wildcard $$(FIGUREDIR)/$(1)/*.tikz))
+ FIGURESTIKZPDF_$(1) := $$(filter-out $$(FIGURESTEXPDF_$(1)),$$(FIGURESTIKZSRC_$(1):.tikz=.pdf))
+ FIGURESPDF_$(1) := $$(FIGURESTEXPDF_$(1)) $$(FIGURESTIKZPDF_$(1))
+endef
+
+$(foreach X,$(FIGURESUBDIRSTEMS),$(eval $(call template_FIGURESPDF,$(X))))
+$(eval ALLFIGURESTEXPDF += $(FIGURESUBDIRSTEMS:%=$$(FIGURESTEXPDF_%)))
+$(eval ALLFIGURESTIKZPDF += $(FIGURESUBDIRSTEMS:%=$$(FIGURESTIKZPDF_%)))
+$(eval ALLFIGURESSRC += $(FIGURESUBDIRSTEMS:%=$(FIGURESTEXSRC_%)) $(FIGURESUBDIRSTEMS:%=$(FIGURESTIKZSRC_%)))
+
+ALLFIGURESPDF := $(ALLFIGURESTEXPDF) $(ALLFIGURESTIKZPDF)
+
+# studentdefs.tex itself does not build a pdf
+TEXSRC := $(filter-out $(SKIP),$(wildcard *.tex))
+TEXPDF := $(TEXSRC:.tex=.pdf)
+
+# allow building protocol instead of protocol.pdf
+TEXSTEM := $(TEXSRC:.tex=)
+
+ALLTEXPDF := $(TEXPDF) $(ALLFIGURESPDF) $(SPECIALTEXPDF)
+
+# only include (re-)buildable dependencies
+DEPSMAKEINCLUDE := $(ALLTEXPDF:%=$(BUILDDIR)/%.d)
+DEPSMAKEINCLUDEEXIST := $(wildcard $(DEPSMAKEINCLUDE))
+
+DEPSMAKE  := $(filter-out $(DEPSMAKEINCLUDE),$(MAKEFILE_LIST))
+DEPS      += $(DEPSMAKE)
+
+# include dependency makefiles, but only if they exist (wildcard LIST)
+# in order to force creation/update if *.d was deleted
+$(DEPSMAKEINCLUDEEXIST): ;
+include $(DEPSMAKEINCLUDEEXIST)
+
+# debugging helper
+# based on http://www.cmcrossroads.com/article/printing-value-makefile-variable
+print-%:
+	$(warning $*=$($*) ($(value $*)))
+
+# http://www.cmcrossroads.com/article/dumping-every-makefile-variable
+.PHONY: printvars
+printvars:
+	@$(foreach V, $(sort $(.VARIABLES)), $(if $(filter-out environment% default automatic, $(origin $V)), $(warning $V=$($V) ($(value $V)))))
+
+# help output
+# based on https://gist.github.com/rcmachado/af3db315e31383502660
+.PHONY: help
+help: ## Show this help
+	@printf 'Usage: make [target]\n\n'
+	@printf 'available targets\n'
+	@awk '/^[a-zA-Z\-\_0-9]+:/ {					\
+		nb = sub( /^## /, "", helpMsg );			\
+		if(nb == 0) {						\
+			helpMsg = $$0;					\
+			nb = sub( /^[^:]*:.* ## /, "", helpMsg );	\
+		}							\
+		if (nb)							\
+			print   $$1 "#" helpMsg;			\
+	}								\
+	{ helpMsg = $$0 }'						\
+	$(MAKEFILE_LIST) |						\
+	column -ts $$'#' |						\
+	sed 's/^/\t/' |							\
+	grep --color=auto '^[^ ]*'
+
+
+# since empty include targets are not remade, create empty dependency includes
+# https://www.gnu.org/software/make/manual/html_node/Remaking-Makefiles.html#Remaking-Makefiles
+$(BUILDDIR)/%.d: MAGIC
+	mkdir -p $(dir $@)
+	$(TOUCH) $@
+
+.PHONY: MAGIC
+MAGIC:
+
 
 # messaging functions
+msgpdfstart = printf "building "$(BOLD)"%s"$(NOCOLOR)" from %s%s\n" "$(2)" "$(1)" "$(if $(3), -jobname=$(3))"
 msgtarget = printf $(GREEN)"%s"$(MAGENTA)" %s"$(NOCOLOR)"\n" "$(1)" "$(2)"
-msgcompile = printf $(BOLD)"%-25s"$(NOCOLOR)" %s\n" "[$(1)]" "$(2)"
-msgfail = printf "%-25s "$(RED)"%s"$(NOCOLOR)"\n" "" "FAILED! Continuing ..."
-msginfo = printf "%-25s "$(CYAN)"%s"$(NOCOLOR)"\n" "" "$(1)"
+msgcompile = printf $(BOLD)"%s"$(NOCOLOR)" %s from %s\n" "[$(1)]" "$(4)" "$(2)$(if $(3), -jobname $(3))"
+msgfail = printf $(RED)"%s"$(NOCOLOR)" using %s %s "$(RED)"FAILED!"$(NOCOLOR)"\n" "$(4)" "$(1)" "$(2)$(if $(3), -jobname $(3))"
 
+# $(1) document
+# $(2) jobname
+# $(3) output-directory
+# $(4) target (for logging)
 define run-typeset
-  $(call msgcompile,$(PDFLATEX),$(1)); \
-  $(PDFLATEX) $(PDFLATEX_FLAGS) $(1) 1>/dev/null 2>&1 || \
-    $(call msgfail)
+  $(call msgcompile,$(PDFLATEX),$(1),$(2),$(4)); \
+  ( cd $(3) && $(PDFLATEX) $(PDFLATEX_FLAGS) $(if $(2),-jobname=$(2)) $(1) ) </dev/null >/dev/null 2>&1 || \
+    { $(call msgfail,$(PDFLATEX),$(1),$(2),$(4)); false; }
 endef
 
+# $(1) aux file
+# $(2) target (for logging)
 define run-bibtex
-  $(call msgcompile,$(BIBTEX),$(call getaux,$(1))); \
-  $(BIBTEX) $(BIB_FLAGS) $(call getaux,$(1))  || \
-    $(call msgfail)
+  $(call msgcompile,$(BIBTEX),$(1),,$(2)); \
+  ( cd $(dir $(1)) && $(BIBTEX) $(BIBTEX_FLAGS) $(notdir $(1)) ) > $(1).bibtex-out 2> $(1).bibtex-err </dev/null || \
+    { $(call msgfail,$(BIBTEX),$(1),,$(2)); ( cat $(1).bibtex-out $(1).bibtex-err ); false; }
 endef
 
-define grep-citation
-  $(GREP) $(GREP_FLAGS) -e "Warning: Citation .*" \
-    $(call getlog,$(1)) 1>/dev/null 2>&1
-endef
-
-define check-citation
-  $(GREP) -e'^\\citation' $(call getaux,$(1)) 2>/dev/null \
-    >$(call gettemp,$(1)); \
-  $(DIFF) $(call gettemp,$(1)) $(call getcit,$(1)) 1>/dev/null 2>&1 || \
-        (mv -f $(call gettemp,$(1)) $(call getcit,$(1)); false)
-endef
-
-define grep-crossref
-  $(GREP) $(GREP_FLAGS) -e "Rerun to get .*" \
-    $(call getlog,$(1)) 1>/dev/null 2>&1 && \
-    $(call msginfo,Rerun latex to get everything right.)
-endef
-
+# $(1) log file
+# $(2) target (for reference)
 define extract-log
-  $(call msgtarget,Extracting log file for target,$(1)); \
-  $(GREP) $(GREP_FLAGS) \
-	-e "Warning|Error|Underfull|Overfull|\!|Reference|Label|Citation" \
-	$(call getname,$(1)).log || :
+  printf "Extracting log for "$(MAGENTA)"%s"$(NOCOLOR)" from "$(GREEN)"%s"$(NOCOLOR)"\n" "$(2)" "$(1)"; \
+  $(GREP) -E -v -e "^<Error-correction level increased from . to . at no cost\\.>$$" $(1) | \
+  $(GREP) $(GREP_FLAGS) -e ":[[:digit:]]+: |Warning|Error|Underfull|Overfull|\!|Reference|Label|Citation" || :
 endef
 
-all: $(TARGET).pdf
+# $(call get-inputs,<jobname>,<target>)
+# $(1) outstem
+# $(2) document
+define get-inputs
+$(AWK) 'BEGIN { rel="$(CURDIR)"; if (rel !~ /\/$$/) {rel = rel "/"}; target="$(2)"; gsub(" ","\\\\ ",target); } \
+/^PWD / {path=substr($$0,5) "/"} \
+/^INPUT / { \
+	f=substr($$0,7); \
+	if (f ~ /^\.\//) {f=path substr(f,3)}; \
+	if (f !~ /^\//) {f=path f}; \
+	sub(rel,"",f); \
+	if (f !~ /\%/ && f != "/dev/null") { all[f] }\
+} END { for (i in all) {gsub(" ", "\\\\ ",i); print target ": " i; print i ":";} }' $(1).fls |\
+sort
+endef
 
+# $(1) foo.fls
+# $(2) outputdir
+define check-inputs
+{ echo $1.nav; echo $1.snm; echo $1.out; $(AWK) '/^INPUT / { print substr($$0,7) }' $1.fls; } | sort -u | $(XARGS) $(OPENSSL) dgst -sha512 2>/dev/null
+endef
+
+# $(1) outstem
+# $(2) target
+define get-bib-inputs
+$(SED) -n '/^\\bibdata{.*}$$/{s!^\\bibdata{\(.*\)}$$!\1!p;}' $(1).aux | \
+$(TR) , '\n' | \
+$(SORT) -u | \
+$(AWK) '{ print "$2: "p$$0".bib"; print p$$0".bib:"; }'
+endef
+
+# $(1) document
+# $(2) jobname
+define getjobstem
+$(if $(2),$(2),$(basename $(notdir $(1))))
+endef
+
+# $(1) document, required
+# $(2) jobname
+# $(3) builddir, if set this is used directly, else the build dir is constructed based on $(BUILDDIR), document and jobname
+define getbuilddir
+$(if $(3),$(3),$(BUILDDIR)/$(1)/$(call getjobstem,$(1),$(2)))
+endef
+
+# $(1) document, required
+# $(2) jobname
+# $(3) output
+define getoutstem
+$(call getbuilddir,$(1),$(2),$(3))/$(call getjobstem,$(1),$(2))
+endef
+
+# $(1) doc, required
+# $(2) out, required
+# $(3) jobname, can be empty
+# $(4) outdir, required
+# $(5) outstem, required
+define pdfbuilderexpsinglepass
+$(call run-typeset,$(1),$(3),$(4),$(2)) || $(TOUCH) $(4).error ; \
+$(AWK) '/^\\bibdata{/{b=1}END{if (b) {exit 1} else {exit 0}}' $(5).aux || { $(call run-bibtex,$(5).aux,$(2)) || $(TOUCH) $(4).error ; } ;\
+( cd $(4) && $(call check-inputs,$(notdir $(5))) ) > $(4).inputs.new ;\
+cmp -s $(4).inputs.new $(4).inputs || { \
+mv $(4).inputs.new $(4).inputs ;\
+} ;
+endef
+
+# $(1) doc, required
+# $(2) out, required
+# $(3) jobname, can be empty
+# $(4) outdir, required
+# $(5) outstem, required
+define pdfbuilderexpsinglepasstry
+test -e $(4).inputs.new || { $(call pdfbuilderexpsinglepass,$(1),$(2),$(3),$(4),$(5)) } ;
+endef
+
+# $(1) doc, required
+# $(2) out, required
+# $(3) jobname, can be empty
+# $(4) outdir, required
+# $(5) outstem, required
+# concept of fix point iteration taken from https://github.com/aclements/latexrun
+# ideally we would set .DELETE_ON_ERROR, but this would break any preview
+# so we roll our own error handling with $(4).error
+# touch output pdf (with its own timestamp) for PDF viewers (such as Okular) to update
+define pdfbuilderexp
+$(call msgpdfstart,$(1),$(2),$(3))
+mkdir -p $(4)
+rm -rf $(4).error
+( test -e $(5).fls && cd $(4) && $(call check-inputs,$(notdir $(5))) ) > $(4).inputs || true
+$(call pdfbuilderexpsinglepass,$(1),$(2),$(3),$(4),$(5))
+$(call pdfbuilderexpsinglepasstry,$(1),$(2),$(3),$(4),$(5))
+$(call pdfbuilderexpsinglepasstry,$(1),$(2),$(3),$(4),$(5))
+$(call pdfbuilderexpsinglepasstry,$(1),$(2),$(3),$(4),$(5))
+$(call pdfbuilderexpsinglepasstry,$(1),$(2),$(3),$(4),$(5))
+test -e $(4).inputs.new || printf $(RED)"%s"$(NOCOLOR)": "$(BOLD)"fix point iteration failed"$(NOCOLOR)"\n" "$(2)"
+$(call extract-log,$(5).log,$(2))
+$(call get-inputs,$(5),$@) > $(BUILDDIR)/$@.d
+$(call get-bib-inputs,$(5),$@) >> $(BUILDDIR)/$@.d
+test -e $(4).error || $(TOUCH) -r $(BUILDDIR)/$@.d $(5).pdf
+mkdir -p $(dir $(2))
+$(MV) $(5).pdf $(2)
+$(TOUCH) -r $(2) $(2)
+test ! -e $(4).error
+endef
+
+# $(1) doc, required
+# $(2) out, required
+# $(3) jobname
+# $(4) builddir
+define pdfbuilder
+$(call pdfbuilderexp,$(1),$(2),$(3),$(call getbuilddir,$(1),$(3),$(4)),$(call getoutstem,$(1),$(3),$(4)))
+endef
+
+.PHONY: $(TEXSTEM)
+$(TEXSTEM): %: %.pdf ;
+
+# target for directly build documents without jobname
+$(filter-out $(ALLFIGURESPDF),$(ALLTEXPDF)): $(FIGUREPDF)
+$(filter-out $(ALLFIGURESTIKZPDF) $(SPECIALTEXPDF),$(ALLTEXPDF)): %.pdf: %.tex $$(DEPS_$$*) $$(FIGURESPDF_$$*) $(DEPS) $(BUILDDIR)/$$@.d
+	$(call pdfbuilder,$<,$@)
+
+# use hard coded for shell completion
+.PHONY: $(FIGUREDIR)
+$(FIGUREDIR): $(ALLFIGURESPDF)
+	cd figures; $(MAKE) all
+
+# tikz figures, other figures are built by generic *.pdf target
+$(ALLFIGURESTIKZPDF): %.pdf: %.tikz $$(DEPS_$$*) $(DEPS) $(BUILDDIR)/$$@.d
+	$(call pdfbuilder,$<,$@)
+
+.PHONY: all
+all: $(FIGUREDIR) $(ALLTEXPDF)
+
+.PHONY: view
 view: all
-	xdg-open $(TARGET).pdf
+	xdg-open thesis.pdf
 
-$(TARGET).pdf: $(DOCUMENT)
-	if [ -d "figures" ]; then \
-		cd $(FIGURES) && $(MAKE); \
-	fi
-	$(call run-typeset,$<)
-	if [ -f "lit.bib" ]; then \
-		$(call run-bibtex,$<); \
-	fi
-	$(call run-typeset,$<)
-	$(call run-typeset,$<)
-	$(call extract-log,$<)
-
+.PHONY : clean cleanall
 clean:
-	$(RM) -fv *.aux
-	$(RM) -fv *.log
-	$(RM) -fv *.toc
-	$(RM) -fv *.lof
-	$(RM) -fv *.lot
-	$(RM) -fv *.eps
-	$(RM) -fv *.bbl
-	$(RM) -fv *.out
-	$(RM) -fv *.fls
-	$(RM) -fv *.blg
-	$(RM) -fv *.auxlock
-	$(RM) -fv *.nav
-	$(RM) -fv *.snm
-	$(RM) -fv *.pdf
-	if [ -d "figures" ]; then \
-		cd $(FIGURES) && $(MAKE) clean; \
-	fi
+	rm -fv $(DEPSMAKEINCLUDE)
+	rm -rfv $(addprefix $(BUILDDIR)/,$(FIGURESRC) $(TEXSRC) $(ALLFIGURESSRC))
+	rm -fv **/*.pdf
+	rm -fv *.pdf
 
-cleanall:
-	$(MAKE) clean
-	$(RM) -fv *.pdf
-	$(RM) -fv tmp/*
-	if [ -d "tmp" ]; then \
-		echo "Deleting directory 'tmp'"; \
-		$(RMDIR) tmp; \
-	fi
-	if [ -d "figures" ]; then \
-		cd $(FIGURES) && $(MAKE) cleanall; \
-	fi
-	$(RM) -fv $(RELEASE_FILENAME).tar.xz
+cleanall: clean
+	rm -fv $(ALLTEXPDF)
+	rm -rfv $(BUILDDIR)/
 
-release: cleanall $(DOCUMENT) $(COMMON) $(OTHERS)
-	$(MKDIR) -p tmp
-	$(TOUCH) $(RELEASE_FILENAME).tar.xz
-	$(TAR) -C .. -h --exclude $(RELEASE_FILENAME).tar.xz -cJvf $(RELEASE_FILENAME).tar.xz $(RELEASE_FILENAME)
-	$(RM) -fv tmp/*
-	if [ -d "tmp" ]; then \
-		echo "Deleting directory 'tmp'"; \
-		$(RMDIR) tmp; \
-	fi
+.PHONY: release $(RELEASE_FILENAME)
+$(RELEASE_FILENAME): cleanall
+	cd .. \
+		&& $(FIND) -L "$(CURDIRBASE)" ! -path "$(CURDIRBASE)" ! -path "$(CURDIRBASE)/$@" ! -path "$(CURDIRBASE)/.git" ! -path "$(CURDIRBASE)/.git/*" -print0 \
+		| $(TAR) -cvzf "$(CURDIRBASE)/$@" $(TAROPTS) -h --null -T -
 
+release: $(RELEASE_FILENAME)
