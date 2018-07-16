@@ -5,29 +5,38 @@ First and foremost, a automatic certification process should avoid user interact
 
 \begin{figure}
     \centering
-    \includegraphics[width=.8\textwidth]{figures/systemArchitecture.pdf} % TODO see jagdish2016certservice
-    \caption{Architecture of the certificate management system}
+    \includegraphics[width=.8\textwidth]{figures/systemArchitecture.pdf}
+    \caption{Architecture of the certificate management system, based on the work of \citet{jagdish2016certservice}}
     \label{fig:systemArchitecture}
 \end{figure}
 
-The basic architecture is displayed in Figure~\ref{fig:systemArchitecture}.
-% TODO: the basic architecture, similar to the one proposed by jagdish2016certservice is shown in Figure~, however the final architecture has
-% some differences. The identity management, authentication and keyserver / public key publishment components are all
-% separate in his design, in reality most systems handle all this via a single directory service.
+The basic architecture of our system was proposed by \citet{jagdish2016certservice} in 2016.
+Our system is very similar, with only slight adjustments to the architecture, as displayed in
+\Cref{fig:systemArchitecture}.
+The main differences between the proposed and implemented system are, that he identity management, authentication,
+keyserver, and public key publishing components are not separated.
+Although separate systems for those components should work in theory, most organizations handle all those tasks via a
+single directory service as an identity management system.
+
 In our approach, a web application handles the user interaction in a nice and user friendly way.
 This webapp can be provided by familiar user interfaces, such as TUMonline in case of our university.
-The app then in turn communicates with a certification management system as backend, that can handle the certification
-components.
+The app then in turn communicates via a REST interface with the certification management system as backend, which can
+handle the certification components.
 
 \section{User Centric features}\label{sec:userDetails}
-Certificates require some fields regarding information of the user.
+Certificates require some fields regarding information of the user. % TODO
 Since most of this information is readily available in organizations user identity management systems, this information
 should be used to reduce the interaction the user needs to have with the system.
 
-This identity management can also be used to authenticate the user.
+This identity management can also be used to authenticate the user. % TODO
 Since most institutions have already verified users identities, those systems can be used as basis of trust.
 
 However, providing a secure way to backup certificates of users is essential to provide a good user experience.
+
+% TODO: Automatic certificate process
+% automatically fetch personal information / emails
+% only require a single authentication step, while still having a secure system
+% public keys published as soon as possible, so we get a privacy by default system
 
 \section{Integration Into Existing Systems}\label{sec:integrationIntoExistingSystems}
 User friendliness is not only a design goal of the frontend, but also the backend APIs, that are documented and can be
@@ -61,15 +70,15 @@ Such APIs are commonly designed as Representational State Transfer (REST) system
 One of the main features for PKI (c.f.~\ref{sec:publicKeyInfrastructure}), the Certificate Repository also needs to be
 added, such that certificates can be published in a more generic way.
 To implement such a repository, there are several different methods, as detailed by
-Hauner~\cite{hauner2016interoperability}:
+\citet{hauner2016interoperability}:
 One possibility would be to publish the certificates via the Lightweight Directory Access Protocol (LDAP).
 The specification in RFC4523~\cite{RFC4523} defines the \lstinline{userCertificate} field for X.509 Certificates.
 
 An alternative would be DNS-Based Authentication of Named Entities (DANE), as defined in RFC8162~\cite{RFC8162} via the
 SMIMEA DNS record.
 Similar to that approach, OpenPGP certificates can also be published using DANE, as defined in RFC7929~\cite{RFC7929}.
-However in this work, we will only concentrate on on X.509 certificates, but lay the foundations to future extensions
-to support OpenPGP
+However in this work, we will only concentrate on on X.509 certificates.
+Additionally, we provide the foundations to future extensions to support OpePGP\@.
 
 Since there are two competing options in this case, we decided to only concentrate on the most widespread and accessible
 option in organizations: LDAP\@.

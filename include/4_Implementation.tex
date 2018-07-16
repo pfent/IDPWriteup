@@ -20,19 +20,20 @@ This resulted in a scary deployment process, which resulted in a virtual machine
 while.
 This is obviously a bad idea, since any \say{Runtime Abstraction} prior to that machine was rendered useless.
 
-Furthermore, when looking at the Java code, no clear lines of input validation were clear.
+Furthermore, when looking at the Java code, no clear lines of input validation or error propagation were visible.
 Almost every class had their own null pointer checks, and returning null themselves in error cases and only logging the
 error message.
 This resulted in the vast majority of unit tests being dedicated to nullability checks.
 
 Lastly, almost all user management features were not included in the overall design of the system, which already
 struggled under its own complexity, while lacking some of the most basic features.
+% TODO: missing features as described earlier
 
 \section{Complexity Reduction}\label{sec:complexityReduction}
 % TODO
 No RAL, only a single Spring Boot Application
 
-Bundled competences with reduced modularization: Certificate Management System and REST-API
+Bundled competences with reduced modularization: Certificate Management System and REST-API and completely separate Frontend module
 
 % TODO: cite https://en.wikipedia.org/wiki/Design_by_contract#cite_note-3
 Applied the design by contract methodology, to reduce the overall \lstinline{null} handling.
@@ -51,14 +52,15 @@ instead of being swallowed by generic null handling code.
 
 \section{Deployment With Gradle}\label{sec:deploymentWithGradle}
 % TODO: proof read
-
-Previous build automation system with Apache Maven.
-Slow build times and inflexible extensibility, which resulted in separate configuration scripts, which needed to be
-executed in the right order.
-Integration of modern web development frameworks for the frontend also only available for alternative systems, would
-result in additional configuration effort.
-This should obviously be handled via the build system.
-One commonly used modern alternative is Gradle, which we used to reduce the need for separate scripts, since Gradle can
+The previous build automation system was based on Apache Maven, combined with Makefiles and Bash scripts.
+This made the development environment non-portable, but only buildable on Linux and resulted in slow build times and
+inflexible extensibility.
+Because of this system, multiple separate configuration scripts needed to be executed in the right order, despite having
+a build system.
+An integration of modern web development frameworks was also not easily possible in this setup, but would result in
+additional manual configuration effort.
+This should obviously be handled via the build system. % TODO
+A more suited and modern alternative is Gradle, which we used to reduce the need for separate scripts, since Gradle can
 be used to perform arbitrary tasks using the Apache Groovy language.
 
 Updating dependencies should be easy, especially for a security-critical application like ours.
@@ -136,7 +138,7 @@ Subsequently, the matching database models are generated and any mismatches are 
 User authentication with LDAP. % TODO
 Two different user information approaches:
 Or according to Microsoft's Active Directory
-Both of which are handled via the LDAP protocol
+Both of which are handled via the LDAP protocol % TODO: cite RFC, summarize auth + user information process
 
 Publishing of certificates can happen via those implementations, i.e.\ publishing of RFC4519~\cite{RFC4519} compliant
 exchange between user information.
