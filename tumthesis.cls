@@ -46,10 +46,10 @@ based on msvreport.cls]
 \def\tumthesis@document{idp}
 \def\tumthesis@titlepage{\tumthesis@thesistitle}
 \addto\captionsenglish{%
-\def\thesisdescription{Interdisciplinary Project in Electrical Engineering}
+\def\thethesistype{Interdisciplinary Project}
 }
 \addto\captionsngerman{%
-\def\thesisdescription{Interdisziplin{\"a}res Projekt in Elektrotechnik}
+\def\thethesistype{Interdisziplin{\"a}res Projekt}
 }
 }
 % Dr.-Ing. instead of Dr. rer. nat.
@@ -507,25 +507,6 @@ verwendet habe.}
     \end{center}
     \noindent\normalsize\sloppy
     \vfill
-    \endgroup
-\end{titlepage}
-
-\cleardoublepage
-
-\begin{titlepage}
-    \vspace*{\fill}
-    \begingroup
-    \assurance\\[2\baselineskip]
-    \thelocation, \\[-2.5ex]
-    \begin{minipage}[t]{.45\textwidth}%
-        \rule{\textwidth}{.5pt}\\[-1ex]
-        {\small\hspace*{1ex}\locationlabel, Date}
-    \end{minipage}%
-    \hfill%
-    \begin{minipage}[t]{.45\textwidth}%
-        \rule{\textwidth}{.5pt}\\[-1ex]
-        {\small\hspace*{1ex}\signaturelabel}
-    \end{minipage}%
     \endgroup
 \end{titlepage}
 }
