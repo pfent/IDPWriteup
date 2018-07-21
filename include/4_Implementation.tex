@@ -32,10 +32,13 @@ described in \Cref{ch:design}.
 
 \section{Complexity Reduction}\label{sec:complexityReduction}
 % TODO
+\subsection*{Reduced Abstraction}
 No RAL, only a single Spring Boot Application
 
+\subsection*{Bundled Competences}
 Bundled competences with reduced modularization: Certificate Management System and REST-API and completely separate Frontend module
 
+\subsection*{Design by Contract}
 % TODO: cite https://en.wikipedia.org/wiki/Design_by_contract#cite_note-3
 Applied the design by contract methodology, to reduce the overall \lstinline{null} handling.
 Around 50\% of all tests were focused on handling nullable types, ensuring null input produces null output and
@@ -64,6 +67,7 @@ In our approach, we handle this by switching to a more capable build system, tha
 A suited and modern alternative build system for Java Projects is Gradle, which we used to eliminate the need for
 separate scripts, since Gradle can be used to perform arbitrary tasks using the Apache Groovy language.
 
+\subsection*{Automatic Dependency Updates}
 Another potentially dangerous consequence of the previous, convoluted build system was, that updating dependencies was
 troublesome.
 Updating dependencies should actually be easy, especially for a security-critical application like ours.
@@ -118,6 +122,7 @@ discarded.
 
 Instead, we decided to use two industry standard dependencies: jOOQ~\cite{jooq} and flyway~\cite{flyway}
 
+\subsection*{Object Relational Mapper}
 The idea behind jOOQ is static class generation to check matching models at compile time and features an alternative
 Domain Specific Language (DSL) to SQL\@.
 This idea provides several advantages over classic Java Database Connectivity (JDBC) in combination with raw SQL:
@@ -127,6 +132,11 @@ This idea provides several advantages over classic Java Database Connectivity (J
 \item Enterprise support if needed for enterprise databases
 \end{itemize}
 
+% TODO: some closing remarks about JDBC not actually abstracting databases good, since they all support different subsets of SQL
+% Type safety shifting errors to the compilation process instead of testing, detecting bugs as early as possible
+
+\subsection*{Database Migrations}
+% TODO: previous migrations: none
 Flyway provides automate creation of database schema and migration of old data via a gradle task, that can be defined to
 automatically apply the correct migrations for the currently deployed version.
 This severely reduces the work, that needs to be done when updating the database schema.
@@ -136,12 +146,37 @@ only a single migration needs to be written.
 Subsequently, the matching database models are generated and any mismatches are immediately reported as compiler errors.
 
 \section{Core Features}\label{sec:coreFeatures}
+
+% TODO: introduction to *actual* features, previous work was to keep the system running long-term and integrate with
+% long term support for the system
+
+\subsection*{Authentication}
 User authentication with LDAP. % TODO
 Two different user information approaches:
 Or according to Microsoft's Active Directory
-Both of which are handled via the LDAP protocol % TODO: cite RFC, summarize auth + user information process
+Both of which are handled via the LDAP protocol % TODO: cite RFC
 
+% TODO: summarize auth + user information process
+% auth process: regular LDAP authentication with ApacheDS, using username / password on TUM active directory
+% user information process: user fields according to RFC4519
+% Email addresses NOT according to RFC, but proprietary microfost way.
+% documented here: https://support.microsoft.com/en-us/help/3190357/
+% primary mail addresses are stored in 'mail' field
+% additionally in the multi-value 'proxyAddesses' attribute, prefixed with uppercase 'SMTP:'
+% secondary email addresses, are contained also contained in this attribute, but prefixed with lowercase 'smtp:'
+% historically, this field could also contain X.400, X.500, cc:Mail, MS-Mail, GroupWise and other obsolete mail
+% addresses, thus the field is prefixed with the corresponding protocol.
+% None of those protocoly are actively in use or supported, thus we chose to ignore those and assume a SMTP only
+% configuration
+%
+% all mail addresses are relevant for email certificates, so correctly extracting them is important
+
+\subsection*{Certificate Publishing}
+% TODO: describe RFC4519 fields to publish a certificate
 Publishing of certificates can happen via those implementations, i.e.\ publishing of RFC4519~\cite{RFC4519} compliant
 exchange between user information.
 
+\subsection*{Automation}
+% TODO: in this work, we actually only provide APIs, which are maximally automated
+% more user facing automation was done on the frontend, so refer to that.
 Automatic approval of certificates.
