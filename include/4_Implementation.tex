@@ -1,5 +1,5 @@
 \chapter{Implementation}\label{ch:implementation}
-In this chapter, we describe the process of applying the design as described in Chapter~\ref{ch:design} to the
+In this chapter, we describe the process of applying the design as described in \Cref{ch:design} to the
 Certificate Management System.
 
 \section{Exising Prototype}\label{sec:exisingPrototype}
@@ -8,7 +8,7 @@ This system can be used as basis of our work, however several key features are s
 
 After analyzing the prototype, it seemed overly complex and overly modularized.
 Several abstractions don't make sense, i.e.\ it was designed to support different so-called "Runtime Abstraction
-Layers", while none of that abstraction was needed.
+Layers" (RALs), while none of that abstraction was needed.
 Furthermore, the project was on first sight modularized with several "common" modules, which turned out to be tightly
 coupled into the whole system.
 This made things worse than no modularization at all, since related classes were distributed between modules and
@@ -18,7 +18,7 @@ Also the deployment of the software was rather fragile and consisting of a combi
 separate database configuration instructions, which needed to be executed in the right order.
 This resulted in a scary deployment process, which resulted in a virtual machine, which was updated every once in a
 while.
-This is obviously a bad idea, since any \say{Runtime Abstraction} prior to that machine was rendered useless.
+This is obviously a bad idea, since any \say{runtime abstraction} prior to that machine was rendered useless.
 
 Furthermore, when looking at the Java code, no clear lines of input validation or error propagation were visible.
 Almost every class had their own null pointer checks, and returning null themselves in error cases and only logging the
@@ -27,7 +27,8 @@ This resulted in the vast majority of unit tests being dedicated to nullability 
 
 Lastly, almost all user management features were not included in the overall design of the system, which already
 struggled under its own complexity, while lacking some of the most basic features.
-% TODO: missing features as described earlier
+For our work, we decided to improove the complexity management of the project and implement the missing features as
+described in \Cref{ch:design}.
 
 \section{Complexity Reduction}\label{sec:complexityReduction}
 % TODO
@@ -51,26 +52,28 @@ Exceptions have the advantage to fail hard, instead of generating propagating nu
 instead of being swallowed by generic null handling code.
 
 \section{Deployment With Gradle}\label{sec:deploymentWithGradle}
-% TODO: proof read
 The previous build automation system was based on Apache Maven, combined with Makefiles and Bash scripts.
 This made the development environment non-portable, but only buildable on Linux and resulted in slow build times and
 inflexible extensibility.
 Because of this system, multiple separate configuration scripts needed to be executed in the right order, despite having
-a build system.
+a build system designed to avoid such troubles.
 An integration of modern web development frameworks was also not easily possible in this setup, but would result in
 additional manual configuration effort.
-This should obviously be handled via the build system. % TODO
-A more suited and modern alternative is Gradle, which we used to reduce the need for separate scripts, since Gradle can
-be used to perform arbitrary tasks using the Apache Groovy language.
 
-Updating dependencies should be easy, especially for a security-critical application like ours.
-More than 25 different third-party libraries used for this project.
-Updating those dependencies is necessary for security updates, especially in a security oriented application, handling
-sensitive information of users and responsible to secure certificates.
+In our approach, we handle this by switching to a more capable build system, that can actually manage those build tasks.
+A suited and modern alternative build system for Java Projects is Gradle, which we used to eliminate the need for
+separate scripts, since Gradle can be used to perform arbitrary tasks using the Apache Groovy language.
 
-Outdated dependencies can be detected via the \say{gradle-versions-plugin}, which displays the newest available versions
-from open-source repositories.
-% TODO: an example, how outdated libraries are reported is shown in the listing below
+Another potentially dangerous consequence of the previous, convoluted build system was, that updating dependencies was
+troublesome.
+Updating dependencies should actually be easy, especially for a security-critical application like ours.
+Gradle has the capabilities of detecting outdated and potentially vulnerable dependencies via the
+\say{gradle-versions-plugin}.
+This plugin can be used to update the more than 25 different third-party libraries, which were used for this project.
+
+The check for outdated dependencies can then be fully automatically be integrated in regular build jobs, which then
+display the newest available versions for open-source repositories.
+An example output is shown below.
 
 \begin{lstlisting}
 $ gradle dependencyUpdates
@@ -91,17 +94,15 @@ The following dependencies have later milestone versions:
 [...]
 \end{lstlisting}
 
-% TODO: This enables periodic builds, e.g. on a continous integration server to auotmatically detect security updates
-
 While handling the dependency updates, we noticed problems with updating individual dependencies, since the dependencies
-have internal dependencies themselves, commonly described as \say{Dependency Hell}: %https://en.wikipedia.org/wiki/Dependency_hell
+have internal dependencies themselves, commonly described as \say{Dependency Hell}: %TODO: cite https://en.wikipedia.org/wiki/Dependency_hell
 
 Especially time consuming and frustrating, since mismatched versions of the Spring Framework and dependent dependencies
 can lead to a \lstinline{ClassNotFoundException} at runtime.
 This is inherently due to Javas implementation of lazily loading classes~\cite{gosling2014java}.
 
-Our implementation solves this, by specifying version numbers globally, which removes the possibility of \say{missing} to
-update one dependent version.
+Our implementation solves this, by specifying version numbers globally, which removes the possibility of \say{missing}
+to update one dependent version.
 This couples compatible versions of the Spring Framework and Log4J together which should automatically keep the versions
 compatible.
 

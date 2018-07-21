@@ -51,7 +51,7 @@ used intuitively.
 Reduction of setup, deployment and development complexity, results in a intuitive for administrators and future
 extensions of the system.
 
-Another important factor is the usage of industry standard tools, such as Java enterprise application.
+An important factor is the usage of industry standard tools, such as Java enterprise application.
 Java enterprise servers are often already available in organizations, but can also easily be set up separately.
 Different databases in organizations, provide abstraction from concrete database.
 
@@ -79,13 +79,13 @@ added, such that certificates can be published in a more generic way.
 To implement such a repository, there are several different methods, as detailed by
 \citet{hauner2016interoperability}:
 One possibility would be to publish the certificates via the Lightweight Directory Access Protocol (LDAP).
-The specification in RFC4523~\cite{RFC4523} defines the \lstinline{userCertificate} field for X.509 Certificates.
+Specifically, RFC4523~\cite{RFC4523} defines the \lstinline{userCertificate} field for X.509 Certificates.
 
 An alternative would be DNS-Based Authentication of Named Entities (DANE), as defined in RFC8162~\cite{RFC8162} via the
 SMIMEA DNS record.
 Similar to that approach, OpenPGP certificates can also be published using DANE, as defined in RFC7929~\cite{RFC7929}.
 However in this work, we will only concentrate on on X.509 certificates.
-Additionally, we provide the foundations to future extensions to support OpePGP\@.
+In our work, we provide the foundations to future extensions to support OpePGP\@.
 
 Since there are two competing options in this case, we decided to only concentrate on the most widespread and accessible
 option in organizations: LDAP\@.
