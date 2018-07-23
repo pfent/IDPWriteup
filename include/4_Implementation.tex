@@ -2,7 +2,7 @@
 In this chapter, we describe the process of applying the design as described in \Cref{ch:design} to the
 Certificate Management System.
 
-\section{Exising Prototype}\label{sec:exisingPrototype}
+\section{Existing Prototype}\label{sec:exisingPrototype}
 Dr.\ Wachs et al.\ already implemented a prototype, that can be used to issue and manage certificates.
 This system can be used as basis of our work, however several key features are still lacking:
 
@@ -14,7 +14,7 @@ tightly coupled into the whole system.
 This made things worse than no modularization at all, since related classes were distributed between modules and
 functionality was duplicated between modules.
 
-Also the deployment of the software was rather fragile and consisting of a combination of bash and maven files and
+Also the deployment of the software was rather fragile and consisting of a combination of Bash and Maven files and
 separate database configuration instructions, which needed to be executed in the right order.
 This resulted in a scary deployment process, which resulted in a virtual machine, which was updated every once in a
 while.
@@ -27,48 +27,69 @@ This resulted in the vast majority of unit tests being dedicated to nullability 
 
 Lastly, almost all user management features were not included in the overall design of the system, which already
 struggled under its own complexity, while lacking some of the most basic features.
-For our work, we decided to improove the complexity management of the project and implement the missing features as
+For our work, we decided to improve the complexity management of the project and implement the missing features as
 described in \Cref{ch:design}.
 
 \section{Complexity Reduction}\label{sec:complexityReduction}
-As a first step, we decided to reduce the overall complexity to allow efficient long-term support of the project.
-% first: reify overly abstract implementations
-% second: bundle competences to reduce functionality spanning multiple modules
-% third: eliminate overly defensive programming
-% TODO
+At first, we decided to reduce the overall complexity to allow efficient long-term support of the project.
+To do this, we decided to take the following steps to keep the project manageable:
+\begin{itemize}
+    \item First, reify the overly abstract implementation of many features
+    \item Second, bundle competences to reduce cross module functionalities
+    \item Third, eliminate overly defensive programming in favour of more compile time checks
+\end{itemize}
+
 \subsection*{Reduced Abstraction}
-No RAL, only a single Spring Boot Application
-% different application approaches were explored by maier2015multidevice. RALs try to abstract over different
-% implementations of the backend.
-% Lead to lots of duplicated code, and excessive tests, and multiple distinct "common" code sections.
-% Java already provides enough abstraction for future extensibility and we settled with one design.
-% User authentication done once properly, instead of supporting JavaEE, Spring, and LDAP authantication
+In the beginning of the working group, \citet{maier2015multidevice} explored different application approaches, i.e.\
+native non-HTML based clients.
+Therefore, different Runtime Abstraction Layers (RALs) were introduced as an abstraction over the different target
+platforms.
+Similar exploration happened for the backend, which could run on multiple target frameworks, over with RALs abstract.
+
+This lead to lots of duplicated code, and excessive tests, and multiple distinct \say{common} code sections.
+For our project, we decided to ditch the RALs and only a single Spring Boot application, since Java alone provides
+enough abstraction for future extensibility and one web framework is already enough to support our application.
+Another advantage of this decision is, that we could do user authentication once properly, instead of having to support
+a weak abstraction over JavaEE, Spring, CLI, and LDAP authentication.
 
 \subsection*{Bundled Competences}
-% module spanning features are hard to maintain
-% reduced abstraction also resulted in clearer boundaries between subsystems
-% 3 subsystems: certificate management component, which hanldes the certification conversion and cryptographic signage
-% and validation. Assumes trusted inputs, which do not need external validation.
-% Web frontend, which handles user management, validates inputs, and access privileges. Provides its services as REST API
-% Completely separate user-facing frontend module, only coupled via the REST API. Designed to automate certificate process.
-Bundled competences with reduced modularization: Certificate Management System and REST-API and completely separate
-Frontend module
+We also decided to bundle competences in modules, since cross module spanning features are rather hard to maintain,
+since changes would also need to happen across boundaries.
+These boundaries between subsystems also became much more visible due to the reduced abstraction, since with fewer
+classes cross module dependencies are much more visible.
+For our use-case, we settled with only three subsystems, where two systems are already very visible in the design
+(c.f.\ \Cref{fig:systemArchitecture}): The web based frontend and the server-side backend.
 
+We additionally divided the backend into two subsystems.
+A certificate management component, which handles the certification conversion, cryptographic signature validation, and
+persistent database storage of valid information.
+This component generally assumes trusted inputs, which do not need additional external validation.
+In contrast, the web component, handles user management, validates inputs, manages access privileges, and provides the
+REST interface for the communication with the frontend.
+
+The user-facing frontend module is completely separated and only coupled via the REST API\@.
+It is designed to automate the user's certificate process and is described in detail in a separate work.
 \subsection*{Design by Contract}
-% TODO: proper sentences
-Applied the design by contract~\cite{meyer1992applying} methodology, to reduce the overall \lstinline{null} handling.
-Around 50\% of all tests were focused on handling nullable types, ensuring null input produces null output and
-generally, that errors result in null values.
-However, since for almost all cases, null values indicate input errors and should not propagate throughout the entire
-system.
-We therefore eliminated most usages of null and used Java Annotations, supporting nullability contracts
-(\lstinline{@Nullable} or \lstinline{@NotNull}).
-This way, the overall number of paths through the code is reduced significantly reduced and all input verification is
-actually handled at the time of input, which additionally provides much better error messages.
+To reduce complexity in the project even more, we applied the design by contract~\cite{meyer1992applying} methodology,
+to eliminate code overhead for the overall \lstinline{null} handling.
+At first, we noticed, that around 50\% of all tests were focused on simply handling nullable types, ensuring
+\lstinline{null} inputs produce \lstinline{null} outputs, which inflates the code size, but provides no actual value.
+Additionally, fatal errors or failed assumptions would also commonly result in null values, which then would propagate
+throughout the entire system instead of failing locally.
 
-Additionally, many errors caused by violated assertions, i.e.\ programming errors, now cause exceptions.
-Exceptions have the advantage to fail hard, instead of generating propagating null values and actually be logged,
-instead of being swallowed by generic null handling code.
+Instead of handling \lstinline{null} values where they indicate exceptional states, we decided to eliminate most usages
+of \lstinline{null} and explicitly used Java annotations (\lstinline{@Nullable} or \lstinline{@NotNull}), which support
+nullability contracts where such values actually make sense (e.g.\ user not found, optional configuration parameter not
+set).
+This way, the overall number of paths through the code was significantly reduced and all input verification can be
+handled locally, at the time of input.
+This additionally provides much better error messages in exceptional cases, where exceptions now do not propagate, but
+are logged right at the point where they are caused.
+
+Many errors, which were caused by violated assertions, i.e.\ programming errors or violated preconditions, now cause
+exceptions.
+They have the advantage to fail hard, instead of generating propagating \lstinline{null} values and actually be logged,
+instead of being swallowed by generic \lstinline{null} handling code.
 
 \section{Deployment With Gradle}\label{sec:deploymentWithGradle}
 The previous build automation system was based on Apache Maven, combined with Makefiles and Bash scripts.
