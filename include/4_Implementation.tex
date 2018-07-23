@@ -7,10 +7,10 @@ Dr.\ Wachs et al.\ already implemented a prototype, that can be used to issue an
 This system can be used as basis of our work, however several key features are still lacking:
 
 After analyzing the prototype, it seemed overly complex and overly modularized.
-Several abstractions don't make sense, i.e.\ it was designed to support different so-called \say{Runtime Abstraction
+Several abstractions do not make sense, i.e.\ it was designed to support different so-called \say{Runtime Abstraction
 Layers} (RALs), while none of that abstraction was needed.
-Furthermore, the project was on first sight modularized with several \say{common} modules, which turned out to be tightly
-coupled into the whole system.
+Furthermore, the project was on first sight modularized with several \say{common} modules, which turned out to be
+tightly coupled into the whole system.
 This made things worse than no modularization at all, since related classes were distributed between modules and
 functionality was duplicated between modules.
 
@@ -56,7 +56,7 @@ Frontend module
 
 \subsection*{Design by Contract}
 % TODO: proper sentences
-Applied the design by contract\cite{meyer1992applying} methodology, to reduce the overall \lstinline{null} handling.
+Applied the design by contract~\cite{meyer1992applying} methodology, to reduce the overall \lstinline{null} handling.
 Around 50\% of all tests were focused on handling nullable types, ensuring null input produces null output and
 generally, that errors result in null values.
 However, since for almost all cases, null values indicate input errors and should not propagate throughout the entire
@@ -174,7 +174,7 @@ In this section we describe the added additional features, which are needed to s
 organization's workflows.
 
 \subsection*{Authentication}
-To authenticate users, we implemented LDAP authentication according to RFC4513\cite{RFC4513}.
+To authenticate users, we implemented LDAP authentication according to RFC4513~\cite{RFC4513}.
 Additionally, we use this authenticated connection to retrieve the necessary user information to generate and validate
 certificates from the directory service.
 For user information, we support two implementations, either standard conforming LDAP users or as implemented by
@@ -196,7 +196,7 @@ Secondary email addresses are contained also contained in this attribute, but pr
 
 To explain this behaviour, Microsoft historically supported now obsolete mail addresses like X.400, X.500, cc:Mail,
 MS-Mail, GroupWise, and others.
-To solve the ambiguity of plain addresses, the addresses are stored as URIs\cite{RFC3986}, prefixed with the protocol.
+To solve the ambiguity of plain addresses, the addresses are stored as URIs~\cite{RFC3986}, prefixed with the protocol.
 
 Since non of those alternative protocols are actively in use or supported, thus we chose to ignore those and assume a
 SMTP only configuration.
