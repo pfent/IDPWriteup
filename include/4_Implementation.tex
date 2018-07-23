@@ -177,8 +177,8 @@ JOOQ here has the advantage to shift parsing errors from the testing into the co
 detect bugs and schema errors as early as possible.
 
 \subsection*{Database Migrations}
-To improve the previously non-existant migration paths of schemas, we introduced Flyway to version the database schema
-and explicitly state, in which state the datbase should be.
+To improve the previously non-existent migration paths of schemas, we introduced Flyway to version the database schema
+and explicitly state, in which state the database should be.
 Flyway provides automate creation of database schema and migration of old data via a gradle task, that can be defined to
 automatically apply the correct migrations for the currently deployed version.
 This severely reduces the work, that needs to be done when updating the database schema.
@@ -224,29 +224,37 @@ SMTP only configuration.
 For our use-case all SMTP addresses are relevant certificate subjects, so we try to extract and handle all addresses.
 
 \subsection*{Certificate Publishing}
-% TODO
-User information already present in directory services.
-Matching certificate information, which cryptographically ensures authenticity of this information added with the
-certificate publishing component.
-Publishing of certificates via the same LDAP service, i.e.\ publishing of RFC4523~\cite{RFC4523} compliant user
-certificate.
-\lstinline{userCertificate} field, containing the certificate in DER encoded binary format.
+To publish certificates containing the authenticated public key information of users, we use the same directory
+services, which already contain existing information about the user.
+In our system, we generate matching certificates, which cryptographically ensures authenticity of this information.
+By publishing though the same source of information, we do not actually add sensitive personal information, but only
+enhance it by guaranteeing its authenticity.
 
-This field can also be multi-value, such that users with multiple certificates, e.g.\ when generating new certificates
-are handled correctly.
-RFC4523 compliant clients can now automatically fetch this \lstinline{userCertificate} and start to encrypt emails to
-that clients.
-E.g. at TUM, when adding the internal address book to Mozilla Thunderbird, the client is able to fetch the certificate,
-validate signed emails from TUM users and send encrypted emails to them.
-Only requires correct user-side client configuration.
+The actual publishment of certificates happens via the same LDAP protocol, i.e.\ with a RFC4523~\cite{RFC4523} compliant
+user certificate in the \lstinline{userCertificate} field.
+This field contains the users certificate in DER encoded binary format.
+It also supports multi-value attributes, such that users with multiple certificates, e.g.\ when generating several new
+certificates are handled correctly by the directory service.
+
+RFC4523 compliant clients with access to the directory can now automatically fetch this \lstinline{userCertificate} and
+start to encrypt and validate emails to and from that user.
+E.g.\ at TUM, when adding the internal active directory address book to Mozilla Thunderbird, the client is able to
+automatically fetch the certificate, validate signed emails from TUM users, and send encrypted emails to them.
+The only thing, which is still not automated is the one-time correct email client configuration.
 
 \subsection*{Automation}
-% TODO: in this work, we actually only provide APIs, which are maximally automated
-% more user facing automation was done on the frontend, so refer to that.
-Automatic approval of certificates assumed as default.
-Might have political reasons, but LDAP user authentication provides strong internal guarantees about the user's
-identity.
+In this particular work, we actually only provide APIs, which then can be used to maximally automate the user-facing
+process in the frontend.
+Interested readers should consult the corresponding work about the frontend.
 
-Automatic publishing of generated certificates allows privacy-by-default behaviour for most clients.
+For the backend, we automated the process as much as possible.
+I.e.\ we assume automatic approval of certificates, since all user information was correctly verified with the identity
+management.
+Manual approval of certificates is slow and drastically breaks the incentive to actually use certificates.
+LDAP user authentication provides strong internal guarantees about the user's identity and also technically creates a
+chain of trust between manual creation of that user when entering the identity management and generating user
+certificates.
+
+Automatic publishing of generated certificates furthermore allows privacy-by-default behaviour for most email clients.
 Certificate publishing is also not a privacy concern, since user information is already stored in the directory service,
-but not yet cryptographically signed.
+just not yet cryptographically signed.
