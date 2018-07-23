@@ -7,9 +7,9 @@ Dr.\ Wachs et al.\ already implemented a prototype, that can be used to issue an
 This system can be used as basis of our work, however several key features are still lacking:
 
 After analyzing the prototype, it seemed overly complex and overly modularized.
-Several abstractions don't make sense, i.e.\ it was designed to support different so-called "Runtime Abstraction
-Layers" (RALs), while none of that abstraction was needed.
-Furthermore, the project was on first sight modularized with several "common" modules, which turned out to be tightly
+Several abstractions don't make sense, i.e.\ it was designed to support different so-called \say{Runtime Abstraction
+Layers} (RALs), while none of that abstraction was needed.
+Furthermore, the project was on first sight modularized with several \say{common} modules, which turned out to be tightly
 coupled into the whole system.
 This made things worse than no modularization at all, since related classes were distributed between modules and
 functionality was duplicated between modules.
@@ -31,12 +31,28 @@ For our work, we decided to improove the complexity management of the project an
 described in \Cref{ch:design}.
 
 \section{Complexity Reduction}\label{sec:complexityReduction}
+As a first step, we decided to reduce the overall complexity to allow efficient long-term support of the project.
+% first: reify overly abstract implementations
+% second: bundle competences to reduce functionality spanning multiple modules
+% third: eliminate overly defensive programming
 % TODO
 \subsection*{Reduced Abstraction}
 No RAL, only a single Spring Boot Application
+% different application approaches were explored by maier2015multidevice. RALs try to abstract over different
+% implementations of the backend.
+% Lead to lots of duplicated code, and excessive tests, and multiple distinct "common" code sections.
+% Java already provides enough abstraction for future extensibility and we settled with one design.
+% User authentication done once properly, instead of supporting JavaEE, Spring, and LDAP authantication
 
 \subsection*{Bundled Competences}
-Bundled competences with reduced modularization: Certificate Management System and REST-API and completely separate Frontend module
+% module spanning features are hard to maintain
+% reduced abstraction also resulted in clearer boundaries between subsystems
+% 3 subsystems: certificate management component, which hanldes the certification conversion and cryptographic signage
+% and validation. Assumes trusted inputs, which do not need external validation.
+% Web frontend, which handles user management, validates inputs, and access privileges. Provides its services as REST API
+% Completely separate user-facing frontend module, only coupled via the REST API. Designed to automate certificate process.
+Bundled competences with reduced modularization: Certificate Management System and REST-API and completely separate
+Frontend module
 
 \subsection*{Design by Contract}
 % TODO: proper sentences
@@ -152,18 +168,21 @@ Subsequently, the matching database models are generated and any mismatches are 
 
 \section{Core Features}\label{sec:coreFeatures}
 
-% TODO: introduction to *actual* features, previous work was to keep the system running long-term and integrate with
-% long term support for the system
+The work in the last sections described log term integration of the development and maintenance process into existing
+systems.
+In this section we describe the added additional features, which are needed to seamlessly integrate into existing
+organization's workflows.
 
 \subsection*{Authentication}
-User authentication with LDAP. % TODO
-Two different user information approaches:
-Or according to Microsoft's Active Directory
-Both of which are handled via the LDAP protocol % TODO: cite RFC
+To authenticate users, we implemented LDAP authentication according to RFC4513\cite{RFC4513}.
+Additionally, we use this authenticated connection to retrieve the necessary user information to generate and validate
+certificates from the directory service.
+For user information, we support two implementations, either standard conforming LDAP users or as implemented by
+Microsoft's Active Directory.
 
 For the auth process, we used the ApacheDS library, which provides standard connectivity to LDAP services.
-Based on the connectivity, we can authenticate users with the service using standard username and password, e.g.\ to
-TUM's Active Directory.
+Based on the connectivity, we can authenticate users with the service using standard username and password over TLS,
+e.g.\ to TUM's Active Directory.
 
 We then can access the users information fields, as specified by RFC4519~\cite{RFC4519}.
 However, many organizations use non standard conforming implementations, most prominently Microsoft's Active Directory,
@@ -184,11 +203,29 @@ SMTP only configuration.
 For our use-case all SMTP addresses are relevant certificate subjects, so we try to extract and handle all addresses.
 
 \subsection*{Certificate Publishing}
-% TODO: describe RFC4519 fields to publish a certificate
-Publishing of certificates can happen via those implementations, i.e.\ publishing of RFC4519~\cite{RFC4519} compliant
-exchange between user information.
+% TODO
+User information already present in directory services.
+Matching certificate information, which cryptographically ensures authenticity of this information added with the
+certificate publishing component.
+Publishing of certificates via the same LDAP service, i.e.\ publishing of RFC4523~\cite{RFC4523} compliant user
+certificate.
+\lstinline{userCertificate} field, containing the certificate in DER encoded binary format.
+
+This field can also be multi-value, such that users with multiple certificates, e.g.\ when generating new certificates
+are handled correctly.
+RFC4523 compliant clients can now automatically fetch this \lstinline{userCertificate} and start to encrypt emails to
+that clients.
+E.g. at TUM, when adding the internal address book to Mozilla Thunderbird, the client is able to fetch the certificate,
+validate signed emails from TUM users and send encrypted emails to them.
+Only requires correct user-side client configuration.
 
 \subsection*{Automation}
 % TODO: in this work, we actually only provide APIs, which are maximally automated
 % more user facing automation was done on the frontend, so refer to that.
-Automatic approval of certificates.
+Automatic approval of certificates assumed as default.
+Might have political reasons, but LDAP user authentication provides strong internal guarantees about the user's
+identity.
+
+Automatic publishing of generated certificates allows privacy-by-default behaviour for most clients.
+Certificate publishing is also not a privacy concern, since user information is already stored in the directory service,
+but not yet cryptographically signed.
