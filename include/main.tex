@@ -25,36 +25,47 @@
 \input{include/4_Implementation.tex}
 
 \chapter{Conclusion}\label{ch:conclusion}
-% TODO
-Encrypting email is very important.
+To conclude, we - again - need to emphasize the importance of encrypted communication.
+Emails are not encrypted by default and existing infrastructure provides only little automated encryption utilities.
 
-Enabling users to use encryption requires tight integration into existing workflows.
+Our major contribution to advance those efforts is a tighter integration into existing infrastructure.
+E.g.\ for the situation at TUM, we can provide almost full automation of the certification process, but are still
+lacking a trust source.
+In theory, all requirements of the DFN Registration Authority are already met, since TUM users are strongly identified
+by the identity management.
+All TUM associate are required have their identity checked, i.e.\ employees need to show their passport when applying for
+a contract and students need to upload a copy of their passport when applying for their program.
+No technical reasons are blocking a roll-out of an automatic and universal certificate management system.
 
-Requirements for a DFN RA are already met, since all users of TUM's identity management have their identity checked.
-Employees need to show their passport when applying for a contract.
-Students need to upload a copy of their passport when applying for their program.
-The only reasons blocking a roll-out of an automatic and universal certificate management system are or political
-nature.
-
-The CMS should also generalize very well to arbitrary organizations, since all required components for integration are
-very common.
-User authentication in the vast majority of organizations is covered by support for LDAP and Active Directory.
+Our certificate management system should also generalize very well to arbitrary organizations, since all required
+components for integration are commonly used and standardized.
+User authentication in the vast majority of organizations is covered by support for LDAP and Active Directories.
 Automatic certificate approval be covered by requirements to check identities, that are usually present for health
 insurances, either for employees or at the moment of matriculation.
 
 \chapter{Future Work}\label{ch:futureWork}
+To successfully implement the results, we and the working group \say{secure email} achieved, there are still a lot of
+open tasks.
+To finish our work on the certificate management component, an actual deployment of the system needs happen.
+Foundations for a proper long term deployment were layd in our work, but to deploy the actual system,
+an actual certificate authority, which is trusted by arbitrary clients needs to be convinced to endorse our system.
 
-Future work includes actual deployment of the system.
-% TODO: foundations for a proper long term deployment are there, we only need
-This requires acquisition of an actual certificate authority, that is trusted by clients.
+Integration into existing infrastructure at TUM would also be desirable, e.g.\ into the CAMPUSonline instance, which
+should allow to run Java applications and view the web frontend in a familiar environment.
 
-Integration into existing infrastructure at TUM also needs to happen, e.g.\ into the CAMPUSonline instance, which should
-allow to run JAVA applications
-
-And last but not least the security of the implementations should be independently audited.
+To convince a certificate authority to trust our system, the security of our implementations should be audited
+separately.
 Since this system is critical for users trust and freedom, no corners should be cut.
-Focus of this work was not the security of the application and questions like, what fields in users certificates are
+Focus of our work was not the security of the application and questions like, what fields in users certificates are
 allowed, were not answered in this work.
+
+Last but not least, substantial work needs to be put into user facing clients.
+Even though most clients already support email encryption, configuration is still a hassle, especially for the
+non-technical users.
+To achieve a true privacy-by-default system, addons, that automatically set-up and configure all email clients should be
+developed.
+A special hurdle for for future work will be web based email clients, even though they could potentially have the best
+privacy-by-default behaviour.
 
 \pagestyle{thesischapter}
 \cleardoublepage
