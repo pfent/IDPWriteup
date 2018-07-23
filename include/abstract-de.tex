@@ -1,3 +1,21 @@
 \small
 
-% TODO
+Eines der größten Probleme von E-Mail Kommunikation ist, dass diese fast ausschließlich unverschlüsselt abläuft.
+Die Erstellung von E-Mail-Verschlüsselungs Zertifikaten ist meißtend nur schlecht in Unternehmensabläufe eingebunden und
+daher für Nutzer nur schlecht zugänglich.
+Da alle Vorraussetzungen für starke Verschlüsselung, zumindest bei interner E-Mail Kommunikation gegeben sind, sollte
+diese standardmäßig aktiviert sein.
+Um dies zu ermöglichen, implementieren wir in unserer Arbeit ein Zertifikatsverwaltungssystem, das stark in bestehende
+Unternehmensabläufe integriert ist.
+
+Die hauptsächlichen Funktionen, die in dieser Arbeit erstellt wurden sind:
+\begin{itemize}
+    \item Den schon vorhandenen Code zur Zertifikatsverwaltung für schon existierende Infrastruktur zu portieren
+    \item Die Nutzer- und Zertifikatsverwaltung in bestehende Verzeichnisdienste zu integrieren
+    \item Die Benutzerseitigen Prozesse weitestgehend zu automatisieren
+\end{itemize}
+
+Das Resultat unserer Arbeit is ein funktionierendes, experimentelles Web basiertes Zertifikatsverwaltungssystem, das in
+der Lage ist automatisch Zertifikate für Benutzer der TUM zu erzeugen.
+Obwohl für den allgemeinen Einsatz noch eine vertrauenswürdige Zertifizierungsstelle fehlt, fuktioniert das System
+bereits mit selbst signierten Zertifikaten und erlaubt es Nutzern einfacher E-Mails zu verschlüsseln.
