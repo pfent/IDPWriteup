@@ -6,10 +6,10 @@ encryption certificates for users.
 \section{Public-Key Cryptography}\label{sec:publicKeyCryptography}
 The goal of public key cryptography is to solve the \say{key-management problem with symmetric
 cryptosystems}~\cite{diffie1976new}.
-The problem with symmetric cryptography was the secure exchange of identical encryption keys, that were easily
+This problem with symmetric cryptography is the secure exchange of identical encryption keys, that can be easily
 compromised in transport.
-The mayor breakthrough of assymetric cryptography was the usage of \say{two different keys - one public and the other
-private}~\cite{schneier2007applied}, where the private key never needed to be transported.
+The mayor breakthrough of public-key and asymmetric cryptography was the usage of \say{two different keys - one public
+and the other private}~\cite{schneier2007applied}, where the private key never needed to be transported.
 
 In this cryptography, the public key is used for encryption and the private for decryption of messages.
 Additionally, the private key can be used to sign messages, such that anyone with the public key can verify, that the
@@ -33,15 +33,16 @@ certificate issuing, management and revocation.
 The Internet Engineering Task Force (IETF) defines the PKI for X.509 in RFC5280~\cite{RFC5280}.
 This formal model defines several key elements:
 \begin{itemize}
-    \item End Entity - Those are the actual users, i.e.\ people or devices, which can be identified with the subject
-    field of a certificate.
-    \item Certificate Authority (CA) - The entity which has the authority to issue certificates.
+    \item \textbf{End Entity} - Those are the actual users, i.e.\ people or devices, which can be identified with the
+    subject field of a certificate.
+    \item \textbf{Certificate Authority (CA)} - The entity which has the authority to issue certificates.
     A CA is an anchor of trust in the PKI and can sign certificates to bind public keys to End Entities.
-    \item Registration Authority (RA) - An optional entity, to which CAs can transfer many administrative functions.
-    \item Certificate Revocation List (CRL) - A list, which contains all revoked certificates, which should no longer be
-    used, but which validity dates have not expired, yet.
-    \item Certificate Repository - A database or directory service, which can be used to get certificates belonging to
-    End Entities.
+    \item \textbf{Registration Authority (RA)} - An optional entity, to which CAs can transfer many administrative
+    functions.
+    \item \textbf{Certificate Revocation List (CRL)} - A list, which contains all revoked certificates, which should no
+    longer be used, but which validity dates have not expired, yet.
+    \item \textbf{Certificate Repository} - A database or directory service, which can be used to get certificates
+    belonging to End Entities.
 \end{itemize}
 
 The process of acquiring certificates is a bit involved, but well defined:
@@ -58,8 +59,8 @@ key which needs to be signed by the matching private key.
     \label{fig:x509Structure}
 \end{figure}
 
-This CSR is then used to generate a valid X.509 Certificate.
-The fields in those certificates are displayed in \Cref{fig:x509Structure}.
+This CSR is then used to generate a valid X.509 public-key certificate.
+The fields contained in those certificates are displayed in \Cref{fig:x509Structure}.
 
 \section{Email Security}\label{sec:emailSecurity}
 
@@ -73,7 +74,7 @@ encryption, like SMTP over TLS~\cite{RFC3207}.
 Since this encryption is only a transport encryption, i.e.\ the message itself is transmitted encrypted over the wire,
 but decrypted on each mail server, those attempts do not provide end-to-end security.
 Truly confidential and authenticated messages are only possible using one of two competing end-to-end cryptographic
-implementations, that operate on top of email: PGP or S/MIME\@.
+implementations, that operate on top of emails: PGP or S/MIME\@.
 
 \subsection{PGP}\label{subsec:pgp}
 Pretty Good Privacy (PGP) was first implemented by Philip Zimmermann in 1991~\cite{zimmermann1995official}.
@@ -127,6 +128,6 @@ TUM-IT uses the DFNs web interface to generate keys, which generates the keys in
 with a user provided passphrase.
 This process is a really good compromise between the ability of a layman to generate keys, while not breaking
 cryptographic guidelines.
-However, this web interface is not very accessible, especially on mobile devices and additionally completely separated
+However, this web interface is not very accessible, especially on mobile devices, and additionally completely separated
 from TUM infrastructure, such that basic integration within TUM workflows or many quality-of-life improvements can not
 be made.

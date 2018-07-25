@@ -1,33 +1,35 @@
 \chapter{Introduction}\label{ch:introduction}
-Already in 2009 Cavoukian coined the term: \say{Privacy by design}~\cite{cavoukian2009privacy}.
-However in many institutions, communication happens mainly via unencrypted email.
-This is very problematic, as personal information of users is exposed to many kinds of abuses.
+In 2009 Cavoukian coined the term: \say{Privacy by design}~\cite{cavoukian2009privacy}.
+Still today communication in many institutions happens mainly via unencrypted email.
+This is very problematic, as personal information of users is exposed to many kinds of misuses.
 
 Designing systems, that employ privacy as a \say{critical enabler of trust and freedoms in our present-day information
 society}~\cite{cavoukian2009privacy} should be in the focus of any respected institution.
 At TUM, there are some possibilities to encrypt messages between users, however none of them properly apply Cavoukian's
 foundational principles.
 
-Any system, that respects the users privacy should have:\\
-\emph{Privacy as the Default Setting}, which means the setting which requires the least user interaction is properly
+Any system, that respects the users privacy should include at last:\\
+\textbf{Privacy as the Default Setting}, which means the setting which requires the least user interaction is properly
 configured for maximum confidentiality.
 Unfortunately, this is not the case for email communication at TUM, since email encryption requires significant
-interaction by users caused by bureaucratic acts.
-This causes even the most basic service messages to be unencrypted.
+additional work by users, which is caused by bureaucratic acts.
+This causes even the most basic service messages to be unencrypted and not authenticated.
+This leads to easy attack vectors for impersonation and social engineering.
 
-The system should be \emph{User-Centric}.
+The system should be \textbf{User-Centric}.
 Common criteria for user-centric applications are usability and efficient processes for common use-cases.
 TUM's current system also fails those criteria, since all email certificate systems are external and do not integrate
 into TUM workflows.
 Usability is additionally reduced by a completely foreign design vocabulary and seemingly arbitrary but required
 procedures.
 
-Since the current system at TUM fails those principles, the working group \say{secure email} set out to design a email
+Since the current system at TUM fails those principles, the working group \say{secure email} set out to design an email
 encryption certificate system, that tries to move the status-quo to a more privacy by default direction.
 
 \section*{Research question}
-This interdisciplinary project implements a certificate management system, that integrates better with organizational
-workflows, not only at TUM, but generalizable to arbitrary organizations by basing our work on standardized software.
+This interdisciplinary project implements this certificate management system, which integrates better with
+organizational workflows.
+The system is not not limited TUM, but generalizable to arbitrary organizations by being based on standardized software.
 Within this project, we face several problems:
 \begin{enumerate}
     \item How should a truly user friendly certificate management system look like?

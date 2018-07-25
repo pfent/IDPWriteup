@@ -1,7 +1,7 @@
 \chapter{Design}\label{ch:design}
 
-In this chapter we describe the approach and design of the of the implemented solution.
-First and foremost, a automatic certification process should avoid user interaction whenever possible.
+In this chapter we describe the approach and design our implemented solution.
+First and foremost, an automatic certification process should avoid user interaction whenever possible.
 
 \begin{figure}
     \centering
@@ -13,7 +13,7 @@ First and foremost, a automatic certification process should avoid user interact
 The basic architecture of our system was proposed by \citet{jagdish2016certservice} in 2016.
 Our system is very similar, with only slight adjustments to the architecture, as displayed in
 \Cref{fig:systemArchitecture}.
-The main differences between the proposed and implemented system are, that he identity management, authentication,
+The main differences between the proposed and implemented system are, that the identity management, authentication,
 keyserver, and public key publishing components are not separated.
 Although separate systems for those components should work in theory, most organizations handle all those tasks via a
 single directory service as an identity management system.
@@ -48,21 +48,22 @@ essential to provide a good user experience.
 \section{Integration Into Existing Systems}\label{sec:integrationIntoExistingSystems}
 User friendliness is not only a design goal of the frontend, but also the backend APIs, that are documented and can be
 used intuitively.
-Reduction of setup, deployment and development complexity, results in a intuitive for administrators and future
-extensions of the system.
+Reduction of setup, deployment, and development complexity results in a more intuitive system management by
+administrators and future extensions of the system.
 
 An important factor is the usage of industry standard tools, such as Java enterprise application.
 Java enterprise servers are often already available in organizations, but can also easily be set up separately.
-Different databases in organizations, provide abstraction from concrete database.
+Since organizations use many different databases, so we also need to provide an abstraction from concrete databases.
 
 To implement a generic database connection we decided to use an Object Relational Mapper (ORM), that works with any
 database an organization wishes to use.
-Previously only MySQL was supported, a more generalized approach would be better, e.g.\ to store data in an Oracle
+Previously only MySQL was supported, but a more generalized approach would be better, e.g.\ to store data in an Oracle
 database, such as TUM uses for its TUMonline.
 
 Furthermore, mismatches between database schema and Java objects are only detected during runtime, which increases
 testing overhead.
-This can be statically checked at compile time, which should decrease bugs and increase developer productivity
+With the help of an ORM, this can be statically checked at compile time, which decreases bugs and increases developer
+productivity.
 
 \section{Compatibility With Embedded Devices}\label{sec:compatibilityWithEmbeddedDevices}
 With the rise of the Internet of Things (IoT), many appliances have a need to communicate with users and each other.
@@ -84,10 +85,10 @@ Specifically, RFC4523~\cite{RFC4523} defines the \lstinline{userCertificate} fie
 An alternative would be DNS-Based Authentication of Named Entities (DANE), as defined in RFC8162~\cite{RFC8162} via the
 SMIMEA DNS record.
 Similar to that approach, OpenPGP certificates can also be published using DANE, as defined in RFC7929~\cite{RFC7929}.
-However in this work, we will only concentrate on on X.509 certificates.
-In our work, we provide the foundations to future extensions to support OpePGP\@.
+However in this work, we concentrated on X.509 certificates.
+Thus in our work, we only provide the foundations for future extensions to support OpePGP\@.
 
 Since there are two competing options in this case, we decided to only concentrate on the most widespread and accessible
-option in organizations: LDAP\@.
-LDAP servers are almost universally available, since most user authentication systems are based on it, most famously
+option for organizations: LDAP\@.
+LDAP servers are almost universally available, since most user authentication systems are based on it, most commonly
 Microsoft's Active Directory.

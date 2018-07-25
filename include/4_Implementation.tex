@@ -1,16 +1,16 @@
 \chapter{Implementation}\label{ch:implementation}
-In this chapter, we describe the process of applying the design as described in \Cref{ch:design} to the
-Certificate Management System.
+In this chapter, we describe the process of applying the design as described in \Cref{ch:design} to our implementation
+of the Certificate Management System.
 
 \section{Existing Prototype}\label{sec:exisingPrototype}
 Dr.\ Wachs et al.\ already implemented a prototype, that can be used to issue and manage certificates.
-This system can be used as basis of our work, however several key features are still lacking:
+This system was used as basis of our work, however several key features were still lacking:
 
 After analyzing the prototype, it seemed overly complex and overly modularized.
 Several abstractions do not make sense, i.e.\ it was designed to support different so-called \say{Runtime Abstraction
-Layers} (RALs), while none of that abstraction was needed.
-Furthermore, the project was on first sight modularized with several \say{common} modules, which turned out to be
-tightly coupled into the whole system.
+Layers} (RALs), while none of that abstraction was actually needed.
+Furthermore, the project was on only modularized on first glance, but contained several \say{common} modules, which
+turned out to be tightly coupled into the whole system.
 This made things worse than no modularization at all, since related classes were distributed between modules and
 functionality was duplicated between modules.
 
@@ -20,19 +20,20 @@ This resulted in a scary deployment process, which resulted in a virtual machine
 while.
 This is obviously a bad idea, since any \say{runtime abstraction} prior to that machine was rendered useless.
 
-Furthermore, when looking at the Java code, no clear lines of input validation or error propagation were visible.
-Almost every class had their own null pointer checks, and returning null themselves in error cases and only logging the
-error message.
+Furthermore, when looking at the Java code, no clear line of input validation or error propagation boundaries were
+visible.
+Almost every class had their own \lstinline{null} pointer checks, returning \lstinline{null} themselves in error cases
+while only logging the error message.
 This resulted in the vast majority of unit tests being dedicated to nullability checks.
 
 Lastly, almost all user management features were not included in the overall design of the system, which already
 struggled under its own complexity, while lacking some of the most basic features.
-For our work, we decided to improve the complexity management of the project and implement the missing features as
-described in \Cref{ch:design}.
+For our work, we decided to first improve the complexity management of the project and then implement the missing
+features as described in \Cref{ch:design}.
 
 \section{Complexity Reduction}\label{sec:complexityReduction}
-At first, we decided to reduce the overall complexity to allow efficient long-term support of the project.
-To do this, we decided to take the following steps to keep the project manageable:
+Overall complexity reduction is important to allow efficient long-term support of the project.
+To achieve this, we decided to take the following steps to keep the project manageable:
 \begin{itemize}
     \item First, reify the overly abstract implementation of many features
     \item Second, bundle competences to reduce cross module functionalities
@@ -44,19 +45,20 @@ In the beginning of the working group, \citet{maier2015multidevice} explored dif
 native non-HTML based clients.
 Therefore, different Runtime Abstraction Layers (RALs) were introduced as an abstraction over the different target
 platforms.
-Similar exploration happened for the backend, which could run on multiple target frameworks, over with RALs abstract.
+Similar exploration happened for the backend, which could run on multiple target frameworks, over wich RALs abstract.
 
-This lead to lots of duplicated code, and excessive tests, and multiple distinct \say{common} code sections.
-For our project, we decided to ditch the RALs and only a single Spring Boot application, since Java alone provides
-enough abstraction for future extensibility and one web framework is already enough to support our application.
+This lead to lots of duplicated code, excessive tests, and multiple distinct \say{common} code sections.
+For our project, we decided to ditch the RALs and only use a single Spring Boot application.
+Java alone provides enough abstraction for future extensibility and one web framework is already enough to support our
+application.
 Another advantage of this decision is, that we could do user authentication once properly, instead of having to support
 a weak abstraction over JavaEE, Spring, CLI, and LDAP authentication.
 
 \subsection*{Bundled Competences}
 We also decided to bundle competences in modules, since cross module spanning features are rather hard to maintain,
-since changes would also need to happen across boundaries.
+since changes to those features would also need to happen across boundaries.
 These boundaries between subsystems also became much more visible due to the reduced abstraction, since with fewer
-classes cross module dependencies are much more visible.
+classes, cross-module dependencies were much more visible.
 For our use-case, we settled with only three subsystems, where two systems are already very visible in the design
 (c.f.\ \Cref{fig:systemArchitecture}): The web based frontend and the server-side backend.
 
@@ -68,12 +70,16 @@ In contrast, the web component, handles user management, validates inputs, manag
 REST interface for the communication with the frontend.
 
 The user-facing frontend module is completely separated and only coupled via the REST API\@.
-It is designed to automate the user's certificate process and is described in detail in a separate work.
+It is designed to automate the user's certificate process and is described in detail in a separate work by Kordian
+Bruck.
+
+
 \subsection*{Design by Contract}
 To reduce complexity in the project even more, we applied the design by contract~\cite{meyer1992applying} methodology,
 to eliminate code overhead for the overall \lstinline{null} handling.
 At first, we noticed, that around 50\% of all tests were focused on simply handling nullable types, ensuring
-\lstinline{null} inputs produce \lstinline{null} outputs, which inflates the code size, but provides no actual value.
+\lstinline{null} inputs produce \lstinline{null} outputs.
+This inflated overall code size, but provided no actual value.
 Additionally, fatal errors or failed assumptions would also commonly result in null values, which then would propagate
 throughout the entire system instead of failing locally.
 
@@ -83,15 +89,15 @@ nullability contracts where such values actually make sense (e.g.\ user not foun
 set).
 This way, the overall number of paths through the code was significantly reduced and all input verification can be
 handled locally, at the time of input.
-This additionally provides much better error messages in exceptional cases, where exceptions now do not propagate, but
-are logged right at the point where they are caused.
+This additionally provides much better error messages in exceptional cases, where exceptions now do not propagate to
+unrelated functions, but are logged right at the point where they are caused.
 
-Many errors, which were caused by violated assertions, i.e.\ programming errors or violated preconditions, now cause
-exceptions.
-They have the advantage to fail hard, instead of generating propagating \lstinline{null} values and actually be logged,
+Many errors, were caused by violated assertions, i.e.\ programming errors or violated preconditions.
+Those now cause exceptions, which have the advantage to fail hard, instead of generating propagating \lstinline{null}
+values and actually be logged,
 instead of being swallowed by generic \lstinline{null} handling code.
 
-\section{Deployment With Gradle}\label{sec:deploymentWithGradle}
+\section{Deployment with Gradle}\label{sec:deploymentWithGradle}
 The previous build automation system was based on Apache Maven, combined with Makefiles and Bash scripts.
 This made the development environment non-portable, but only buildable on Linux and resulted in slow build times and
 inflexible extensibility.
@@ -101,7 +107,7 @@ An integration of modern web development frameworks was also not easily possible
 additional manual configuration effort.
 
 In our approach, we handle this by switching to a more capable build system, that can actually manage those build tasks.
-A suited and modern alternative build system for Java Projects is Gradle, which we used to eliminate the need for
+A suited and modern alternative build system for Java projects is Gradle, which we used to eliminate the need for
 separate scripts, since Gradle can be used to perform arbitrary tasks using the Apache Groovy language.
 
 \subsection*{Automatic Dependency Updates}
@@ -112,11 +118,12 @@ Gradle has the capabilities of detecting outdated and potentially vulnerable dep
 \say{gradle-versions-plugin}.
 This plugin can be used to update the more than 25 different third-party libraries, which were used for this project.
 
-The check for outdated dependencies can then be fully automatically be integrated in regular build jobs, which then
-display the newest available versions for open-source repositories.
+The check for outdated dependencies can then be fully automatically be integrated in regular build jobs, which displays
+the newest available versions for open-source repositories.
 An example output is shown below.
 
-\begin{lstlisting}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[caption={Example output of the gradle-versions-plugin}]
 $ gradle dependencyUpdates
 ------------------------------------------------------------
 : Project Dependency Updates (report to plain text file)
@@ -134,30 +141,31 @@ The following dependencies have later milestone versions:
 - org.mariadb.jdbc:mariadb-java-client [2.2.3 -> 2.2.5]
 [...]
 \end{lstlisting}
+\end{minipage}
 
 While handling the dependency updates, we noticed problems with updating individual dependencies, since the dependencies
 have internal dependencies themselves, commonly described as \say{Dependency Hell}~\cite{jang2006linux}.
 
-Especially time consuming and frustrating, since mismatched versions of the Spring Framework and dependent dependencies
-can lead to a \lstinline{ClassNotFoundException} at runtime.
+In out application, dependency updates were especially time consuming and frustrating, since mismatched versions of the
+Spring Framework and dependent dependencies can lead to \lstinline{ClassNotFoundException}s at runtime.
 This is inherently due to Java's implementation of lazily loading classes~\cite{gosling2014java}.
 
-Our implementation solves this, by specifying version numbers globally, which removes the possibility of \say{missing}
+Our implementation solves this by specifying version numbers globally, which removes the possibility of \say{missing}
 to update one dependent version.
-This couples compatible versions of the Spring Framework and Log4J together which should automatically keep the versions
+This couples compatible versions of the whole Spring Framework and Log4J together which automatically keeps the versions
 compatible.
 
-\section{Database Versioning And Migrations}\label{sec:databaseVersioningAndMigrations}
+\section{Database Versioning and Migrations}\label{sec:databaseVersioningAndMigrations}
 While working on the database, we quickly noticed, that the database access needs severe improvement.
-Since every change in the database schema resulted in multiple changes in the breakages, all of which only happened at
+Since every change in the database schema resulted in multiple changes and breakages, all of which only were detected at
 runtime.
-Since none of the existing tests actually verified the database, this only manifested at runtime in hard to debug
-crashes.
-Also, no good upgrade path is available, since there is no no versioning information available in the database.
-The jackhammer method of exporting the whole database and recreating it each time the schema is updated was quickly
+Since none of the existing tests actually verified the database, this only manifested in hard to debug crashes.
+Also, no good upgrade path is available, since there war no versioning information available in the database.
+The jackhammer method of exporting the whole database and recreating it each time the schemas were updated was quickly
 discarded.
 
-Instead, we decided to use two industry standard dependencies: jOOQ~\cite{jooq} and flyway~\cite{flyway}
+Instead, we decided to use two industry standard dependencies to manage those problems: jOOQ~\cite{jooq} and
+flyway~\cite{flyway}
 
 \subsection*{Object Relational Mapper}
 The idea behind jOOQ is static class generation to check matching models at compile time and features an alternative
@@ -166,7 +174,7 @@ This idea provides several advantages over classic Java Database Connectivity (J
 \begin{itemize}
 \item Type safety between the database model and the Java application
 \item Support for different databases
-\item Enterprise support if needed for enterprise databases
+\item Enterprise support, if needed for enterprise databases
 \end{itemize}
 
 JDBC has the problem, that it provides an abstraction to connect to different databases, but does not abstract the
@@ -179,7 +187,7 @@ detect bugs and schema errors as early as possible.
 \subsection*{Database Migrations}
 To improve the previously non-existent migration paths of schemas, we introduced Flyway to version the database schema
 and explicitly state, in which state the database should be.
-Flyway provides automate creation of database schema and migration of old data via a gradle task, that can be defined to
+Flyway provides automate creation of database schema and migration of old data via a Gradle task, that can be defined to
 automatically apply the correct migrations for the currently deployed version.
 This severely reduces the work, that needs to be done when updating the database schema.
 
@@ -198,8 +206,8 @@ organization's workflows.
 To authenticate users, we implemented LDAP authentication according to RFC4513~\cite{RFC4513}.
 Additionally, we use this authenticated connection to retrieve the necessary user information to generate and validate
 certificates from the directory service.
-For user information, we support two implementations, either standard conforming LDAP users or as implemented by
-Microsoft's Active Directory.
+For user information, we support two implementations, either standard conforming LDAP users or user information as
+implemented by Microsoft's Active Directory.
 
 For the auth process, we used the ApacheDS library, which provides standard connectivity to LDAP services.
 Based on the connectivity, we can authenticate users with the service using standard username and password over TLS,
@@ -211,16 +219,16 @@ which handles email addresses quite differently.
 Luckily, Microsoft publicly documents its implementation\footnote{https://support.microsoft.com/en-us/help/3190357/}.
 The RFC defines the \lstinline{mail} field to contain email addresses, but in Active Directories only the primary
 address is listed here.
-However, there is an additional, non-standard multi-value \lstinline{proxyAddresses} attribute, which also contains the
+However, there is an additional, non-standard, multi-value \lstinline{proxyAddresses} attribute, which also contains the
 primary email address, but prefixed with uppercase \lstinline{SMTP:}.
 Secondary email addresses are contained also contained in this attribute, but prefixed with lowercase \lstinline{smtp:}.
 
 To explain this behaviour, Microsoft historically supported now obsolete mail addresses like X.400, X.500, cc:Mail,
 MS-Mail, GroupWise, and others.
-To solve the ambiguity of plain addresses, the addresses are stored as URIs~\cite{RFC3986}, prefixed with the protocol.
+To solve the ambiguity of plain addresses, the addresses are stored as URIs~\cite{RFC3986}, with a protocol prefixed.
 
-Since non of those alternative protocols are actively in use or supported, thus we chose to ignore those and assume a
-SMTP only configuration.
+Since non of those alternative protocols are actively in use or supported, we chose to ignore those and assume a
+SMTP-only configuration.
 For our use-case all SMTP addresses are relevant certificate subjects, so we try to extract and handle all addresses.
 
 \subsection*{Certificate Publishing}
@@ -234,13 +242,13 @@ The actual publishment of certificates happens via the same LDAP protocol, i.e.\
 user certificate in the \lstinline{userCertificate} field.
 This field contains the users certificate in DER encoded binary format.
 It also supports multi-value attributes, such that users with multiple certificates, e.g.\ when generating several new
-certificates are handled correctly by the directory service.
+certificates, are handled correctly by the directory service.
 
 RFC4523 compliant clients with access to the directory can now automatically fetch this \lstinline{userCertificate} and
 start to encrypt and validate emails to and from that user.
 E.g.\ at TUM, when adding the internal active directory address book to Mozilla Thunderbird, the client is able to
 automatically fetch the certificate, validate signed emails from TUM users, and send encrypted emails to them.
-The only thing, which is still not automated is the one-time correct email client configuration.
+The only aspect, which is still not automated is the one-time correct email client configuration.
 
 \subsection*{Automation}
 In this particular work, we actually only provide APIs, which then can be used to maximally automate the user-facing
@@ -250,7 +258,8 @@ Interested readers should consult the corresponding work about the frontend.
 For the backend, we automated the process as much as possible.
 I.e.\ we assume automatic approval of certificates, since all user information was correctly verified with the identity
 management.
-Manual approval of certificates is slow and drastically breaks the incentive to actually use certificates.
+Manual approval of certificates is slow and drastically breaks the flow and user's incentive to actually use
+certificates.
 LDAP user authentication provides strong internal guarantees about the user's identity and also technically creates a
 chain of trust between manual creation of that user when entering the identity management and generating user
 certificates.
