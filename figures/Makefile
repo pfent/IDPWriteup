@@ -14,7 +14,13 @@ SVG_PDFS := $(SVG_FILES:.svg=.pdf)
 %.pdf : %.svg
 	inkscape $< --export-pdf=$@
 
-all : $(R_PDFS) $(DOT_PDFS) $(SVG_PDFS)
+TEX_FILES := $(wildcard *.tex)
+TEX_PDFS := $(SVG_FILES:.tex=.pdf)
+%.pdf : %.tex
+	pdflatex $<
+
+
+all : $(R_PDFS) $(DOT_PDFS) $(SVG_PDFS) $(TEX_PDFS)
 
 clean :
 	git clean -fx
