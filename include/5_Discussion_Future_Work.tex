@@ -1,0 +1,28 @@
+\chapter{Discussion and Future Work}\label{ch:futureWork}
+
+\section*{Discussion}
+% TODO
+
+\section*{Future Work}
+To successfully implement the results, we and the working group \say{secure email} achieved, there are still a lot of
+open tasks.
+To finish our work on the certificate management component, an actual deployment of the system needs to happen.
+Foundations for a proper long term deployment were layed in our work, but to deploy the actual system,
+an actual certificate authority, which is trusted by arbitrary clients needs to be convinced to endorse our system.
+
+Integration into existing infrastructure at TUM would also be desirable, e.g.\ into the CAMPUSonline instance, which
+should allow to run Java applications and view the web frontend in a familiar environment.
+
+To convince a certificate authority to trust our system, the security of our implementations should be audited
+separately.
+Since this system is critical for user's trust and freedom, no corners should be cut.
+Our work's focus was not the security of the application and questions like: \say{What fields in a user's certificates
+are trusted and which can be misused?}, were not answered in this work.
+
+Last but not least, substantial work needs to be put into user facing clients.
+Even though most clients already support email encryption, configuration is still a hassle, especially for the
+non-technical users.
+To achieve a true privacy-by-default system, addons, that automatically set-up and configure all email clients should be
+developed.
+A special hurdle for for future work will be web based email clients, even though they could potentially have the best
+privacy-by-default behaviour.

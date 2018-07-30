@@ -61,7 +61,3 @@ Structured by pages          REST Interface within different "Controllers": User
 
 * was noch zu tun ist, bis das System vollends funktioniert. integration mit der wirklichen CA
 (organisatorischer Schritt, damit diese Lösung DFN-compliantz ausgerollt werden dürfte)
-
-
-Viele Grüße
-Holger
