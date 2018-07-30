@@ -23,15 +23,6 @@ Probably needs DFN regulatory rules.
 
 # 5 Implementation
 
-# Overview over components
-            Gradle Build
- ________________/\________________
-/                                  \
-Frontend            --REST-- Backend
-Built with node         CMS: certificate component & database persistency & models
-Typescript              WEB: Authentication / user information with LDAP, certificate publishing with LDAP, 
-Structured by pages          REST Interface within different "Controllers": Users, X509 CSR + finished certificates, separate OpenPGP
-
 # 6 Discussion and Future Work
 **NEW CHAPTER**
 

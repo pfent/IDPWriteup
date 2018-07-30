@@ -1,13 +1,14 @@
 \documentclass{standalone}
 \usepackage{tikz}
+\usepackage{helvet}
 \usetikzlibrary{arrows.meta}
 \usetikzlibrary{decorations.pathreplacing}
 \usepackage{varwidth}
 \usetikzlibrary{fit}
 
 \begin{document}
-    \begin{tikzpicture}
-        \draw [decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt] (-2.6,4.6) -- (15,4.6)
+    \begin{tikzpicture}[font=\sffamily\small]
+        \draw [decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt] (-2.7,4.4) -- (15.1,4.4)
         node [black,midway,yshift=0.6cm] {\Large Gradle Build};
         \node at (0, 0) {\framebox{\Large
         {\begin{varwidth}{\linewidth}
@@ -19,7 +20,7 @@
              \end{itemize}
         \end{varwidth}}
         }};
-        \draw [<->,line width=1pt] (2.81, 0) -- (5.16, 0)
+        \draw [<->,line width=1pt] (2.89, 0) -- (5, 0)
         node [black,midway,yshift=0.6cm] {\Large REST};
         \node at (10, 0) {\framebox{\Large
         {\begin{varwidth}{\linewidth}

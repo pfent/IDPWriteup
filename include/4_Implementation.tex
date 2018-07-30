@@ -73,7 +73,6 @@ The user-facing frontend module is completely separated and only coupled via the
 It is designed to automate the user's certificate process and is described in detail in a separate work by Kordian
 Bruck.
 
-
 \subsection*{Design by Contract}
 To reduce complexity in the project even more, we applied the design by contract~\cite{meyer1992applying} methodology,
 to eliminate code overhead for the overall \lstinline{null} handling.
@@ -109,6 +108,18 @@ additional manual configuration effort.
 In our approach, we handle this by switching to a more capable build system, that can actually manage those build tasks.
 A suited and modern alternative build system for Java projects is Gradle, which we used to eliminate the need for
 separate scripts, since Gradle can be used to perform arbitrary tasks using the Apache Groovy language.
+
+The resulting architecture is shown in \Cref{fig:componentStructure}.
+In the component structure, we can see the more structured approach with a unified build system.
+While the frontend is only loosely coupled with a REST interface, the CMS component provides basic functionality, which
+enables the web component to implement features on top.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/componentStructure.pdf}
+    \caption{Component structure of the project}
+    \label{fig:componentStructure}
+\end{figure}
 
 \subsection*{Automatic Dependency Updates}
 Another potentially dangerous consequence of the previous, convoluted build system was, that updating dependencies was
