@@ -92,3 +92,29 @@ Since there are two competing options in this case, we decided to only concentra
 option for organizations: LDAP\@.
 LDAP servers are almost universally available, since most user authentication systems are based on it, most commonly
 Microsoft's Active Directory.
+
+\section*{Example of generating a certificate for TUM users}
+
+\Cref{fig:certificateFlow} shows an exemplary message flow between the different subsystems in the process of acquiring
+a certificate.
+Users start by get the frontend interface delivered by TUMonline.
+This interface then runs entirely offline on a users device, only communicating directly with the backend.
+Through the frontend, users log in with their usual accounts, which in turn get checked by the backend with
+the central user management in the Active Directory.
+Then users generate their private- and public-key pair locally, completely offline without the private key leaving the
+user's device.
+Top generate a Certificate Signing Request (CSR), users then can query the backend about which information it accepts as
+valid.
+Again completely offline, users generate this CSR and upload it to the backend.
+
+Since the backend has no guarantees, users actually use the provided information, it needs to validate the CSR can can
+then proceed to send it to the certificate authority.
+The certificate authority then processes the CSR and sends the signed public key certificate back to the backend.
+The backend then allows the user to acquire their certificate and automatically publishes it to the Active Directory.
+
+\begin{figure}[hb]
+    \centering
+    \includegraphics[width=.66\textwidth]{figures/certificateFlow.pdf}
+    \caption{Message flow between participants to generate a new certificate}
+    \label{fig:certificateFlow}
+\end{figure}

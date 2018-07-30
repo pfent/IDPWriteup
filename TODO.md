@@ -7,9 +7,6 @@ small analysis with requirements
 
 # 4 Design
 
-## Flow diagram
-To show the interaction of different stakeholders / components
-
 ## DFN *without* human RA:
 DFN PKI CP : https://www.pki.dfn.de/fileadmin/PKI/DFN-PKI_CP.pdf
 > 3.2.3 Authentification of a natural person
