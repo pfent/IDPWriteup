@@ -1,4 +1,4 @@
-\chapter{Related Work}\label{ch:relatedWork}
+\chapter{Related and Previous Work}\label{ch:relatedWork}
 Several commercial certificate authorities provide email and, more generally, client certificates for users.
 Additionally, some corporations even offer organizational certificate management solutions.
 E.g.\ Comodo\footnote{\url{https://www.comodo.com/home/email-security/free-email-certificate.php}},
@@ -11,6 +11,7 @@ holes.
 On top of that, the services are rather expensive with around 10€ per user and year, which makes them unappealing for
 organizations the size of TUM with almost 50k users.
 
+\section*{Let's Encrypt}
 A more recent open source project, providing encryption certification services is Let's Encrypt.
 The Let's Encrypt system provides a way to automatically provide x509 certificates for client to server communication,
 e.g.\ for HTTPS\@.
@@ -26,13 +27,16 @@ working draft~\cite{letsencrypteacme}.
 
 This project is already immensely successful, providing over 50 Million active certificates, as of March 2018 (see
 \Cref{fig:letsencrypt})
-However, this system is not intended for the general population, since the validation challenges are not end-user
-focused, but mostly for web servers.
+However, this system is not intended for the general population, since the validation challenges are not for end-user but for web servers.
 X.509 certificates, as issued by Let's Encrypt, can generally be used for email security with S/MIME\@.
-Since this is not the focus of Let's Encrypt, they do not issue certificates, that would be usable for email encryption.
+There is also a proposed extension to the ACME protocol by \citet{melnikovAcmeSmime}, but not in any conceivable way
+supported by Let's Encrypt.
+Instead they explicitly state in their FAQ\footnote{https://letsencrypt.org/docs/faq/#does-let-s-encrypt-issue-certificates-for-anything-other-than-ssl-tls-for-websites},
+that they do not issue certificates for anything other than websites.
 
-More work about how email encryption certificates can be managed in a organization has been done by the TUM Secure
-Email and User Certification Project, with the works
+\section*{Previous Work at TUM}
+How email encryption certificates can be managed in an organization has been studied by the TUM Secure Email and User
+Certification Project, with the works
 of~\citet{hauner2016interoperability, jagdish2016certservice, straub2016directoryservice, maier2015multidevice}.
 Maximilian Meier explored secure email communication with multiple devices, where he analyzed the requirements of
 users and surveyed different implementations, that try to satisfy those requirements.

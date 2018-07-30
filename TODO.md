@@ -1,15 +1,3 @@
-# Intro
-structure of this work
-
-# Related work
-## ACME smime extension:
-https://tools.ietf.org/html/draft-ietf-acme-email-smime-02
-
-letsencrypt FAQ explicitly does not issue such certificates and is not affiliated with that draft
-https://letsencrypt.org/docs/faq/#does-let-s-encrypt-issue-certificates-for-anything-other-than-ssl-tls-for-websites
-
-## Previous work instead of related work for securemail
-
 # PKI -> Background
 
 ## PGP WoT
