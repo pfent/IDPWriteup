@@ -1,5 +1,4 @@
 \chapter{Background}\label{ch:publicKeyInfrastructure}
-
 This chapter explains, how privacy in communication can be achieved and what infrastructure is needed to provide
 encryption certificates for users.
 
@@ -117,12 +116,6 @@ This makes S/MIME the most comfortable way to secure emails for users.
 We will therefore focus on S/MIME in this work.
 
 \section{Certificates at TUM}\label{sec:certificatesAtTum}
-% TODO:
-%small analysis with requirements
-%* centralized system to have consistent encryption standards
-%* integrated with TUM services / user management
-%* usable on *all* platforms, ideally browser-based
-
 Certificate management in larger organizations is usually complex and confusing for the non technical user.
 As an example, we can take a look at the existing certificate infrastructure at our own university: TUM\@.
 There are several ways of acquiring certificates:
@@ -153,6 +146,25 @@ TUM-IT uses the DFNs web interface to generate keys, which generates the keys in
 with a user provided passphrase.
 This process is a really good compromise between the ability of a layman to generate keys, while not breaking
 cryptographic guidelines.
-However, this web interface is not very accessible, especially on mobile devices, and additionally completely separated
-from TUM infrastructure, such that basic integration within TUM workflows or many quality-of-life improvements can not
-be made.
+Sadly, this web interface relies on the deprecated \lstinline{<keygen>}
+HTML-tag\footnote{\url{https://developer.mozilla.org/en-US/docs/Web/HTML/Element/keygen}}, with abysmal support on
+mobile devices.
+Additionally, this web interface is not very accessible, with mobile support completely lacking.
+It is also completely separated from TUM infrastructure, such that basic integration within TUM workflows or many
+quality-of-life improvements can not be made.
+
+\subsection*{Possible Improvements}
+Situation at TUM is probably typical for many organizations, especially universities.
+Concrete improvements, that are required for a more widespread adoption of email encryption:
+
+Definitive requirement: usable on all platforms, ideally browser-based, independent of the concrete browser.
+contemporary use of computers shift to much more mobile devices.
+current systems all unusable on mobile devices
+
+Then it needs to be integrated into the organizatorial structure, since TUM already issues ID cards, it would only make
+sense to be able to also identify oneself digitally, certified by TUM\@.
+
+Integration into existing infrastructure, combined with a centralized system can provide consistent encryption
+standards.
+Combined with full automatization, could provide the best user experience, which would hopefully turn into a similar
+success like we observed with Let's Encrypt in \Cref{ch:relatedWork}.
