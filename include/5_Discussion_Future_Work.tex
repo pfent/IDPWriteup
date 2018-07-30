@@ -1,16 +1,46 @@
 \chapter{Discussion and Future Work}\label{ch:futureWork}
 
-In this chapter, we
+In this chapter, we discuss opportunities and limitations of our implementation when applied to be used at TUM.
+We also give an outlook on how our system can be used in production and extended for future applications.
 
 \section*{Discussion}
 % TODO: wie das neue System den Status Quo verbessert
+
+For TUM our implementation would be a huge improvement with regards to usability and accessibility.
+For majority of use cases, consolidate and replace existing systems.
+This has the advantage to make the process simpler, with less possible causes for confusion for the average user.
+Since we can also eliminate most of the manual interaction, users can generate certificates much faster, which should
+increase encryption usage similar to how Let's Encrypt did for HTTPS usage.
+
+Additionally, we provide a interface, that is also comfortably usable on mobile devices, which was previously not
+available.
+We also provide users with a convenient and secure way to transfer private keys to their mobile devices.
+As many users see their mobile devices as the most prominent way to communicate this should have been a focus long ago.
+
+Security considerations:
+JS being delivered by backend.
+Also contains the code, that generates the private keys.
+Would enable the possibility for attacks, where the server delivers malicious code to the client, which then could
+compromise private keys.
+
+First counter-measure against man-in-the-middle attacks is HTTPS, so an attacker would need to compromise the server
+delivering the JS.
+Additionally, we provide the possibility to not use JS generated private keys, but only use the system to
+submit CSRs.
+Not ideal, since this is not a recommendable way for average users.
+
+The most ideal counter-measure would be to have a fully reproducible build of the open-source
+frontend\footnote{\url{https://reproducible-builds.org/}}.
+This would allow anyone to independently audit the code and be sure the server only delivers that reproducibly built
+frontend.
+The security-aware users then only would need to compare a checksum of the code to be sure to execute legitimate code.
 
 \subsection*{Limitations regarding certificate authorities}
 Most probably most organization's have sufficient identity checks when people join it should already comply with
 relatively strict identification rules.
 However for our example at TUM, the situation is a bit more complicated:
-The DFN provides publicly available guidelines\footnote{https://www.pki.dfn.de/fileadmin/PKI/DFN-PKI_CP.pdf} how to
-handle certificates.
+The DFN provides publicly available guidelines\footnote{\url{https://www.pki.dfn.de/fileadmin/PKI/DFN-PKI_CP.pdf}} how
+to handle certificates.
 For email certificates it requires the \say{Authentification of a natural person} (cf.\ Section 3.2.3 in the linked
 document).
 This authentication needs to happen in-person (\say{persönliche Identitätsprüfung}), but not necessarily at the time of
