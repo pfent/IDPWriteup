@@ -1,11 +1,3 @@
-# PKI -> Background
-
-## PGP WoT
-https://www.gnupg.org/gph/en/manual/x547.html
-Several problems for organizations, difficulty to scale
-key rotations made uneasy
-
-
 # 3.4 certificates at TUM
 
 small analysis with requirements

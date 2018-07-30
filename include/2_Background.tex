@@ -62,8 +62,27 @@ key which needs to be signed by the matching private key.
 This CSR is then used to generate a valid X.509 public-key certificate.
 The fields contained in those certificates are displayed in \Cref{fig:x509Structure}.
 
-\section{Email Security}\label{sec:emailSecurity}
+\section{Web of Trust}\label{sec:pgpWebOfTrust}
+The previous approach tries to solve the key-trusting problem in a hierarchical and somewhat centralized way.
+In the later half of the 1990's the idea of a decentralized approach of trust became more
+popular~\cite{blaze1996decentralized, abdul1997pgp}.
+In that system users do not trust authorities, but relies on direct verification of other peoples keys and
+cryptographically certification of that trust by multiple parties.
 
+In combination with an approach of trusting signatures of already trusted people, a so called \say{web of trust} is
+established.
+This approach can also express different levels of \say{trustworthyness}.
+I.e.\ RFC4880~\cite{RFC4880} defines a field with values 0--255 for this with values of 60 for partial trust and values
+of 120 for complete trust.
+How that trust is established is only informally specified in various guidelines, but in a peer to peer approach
+essentially every peer needs to verify the trust on their own.
+
+The web of trust can often create indirect trust of strangers (cf.\ the \say{small world phenomenon}),
+but if and how much this indirect trust can translate to real trust is mostly left to the user.
+This creates the effect, that the web of trust works great for the ingroup -- especially the technically inclined users
+-- but very bad of the vastly larger outgroup.
+
+\section{Email Security}\label{sec:emailSecurity}
 Emails, as defined in in RFC5322~\cite{RFC5322}, are unencrypted.
 This is largely caused by the fact, that emails are somewhat a relic from ancient times of the internet, already
 defined in 1977 as \say{ARPA NETWORK TEXT MESSAGES}~\cite{RFC0733}.
