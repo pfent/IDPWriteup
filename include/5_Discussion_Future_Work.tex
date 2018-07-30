@@ -1,7 +1,25 @@
 \chapter{Discussion and Future Work}\label{ch:futureWork}
 
+In this chapter, we
+
 \section*{Discussion}
-% TODO
+% TODO: wie das neue System den Status Quo verbessert
+
+\subsection*{Limitations regarding certificate authorities}
+Most probably most organization's have sufficient identity checks when people join it should already comply with
+relatively strict identification rules.
+However for our example at TUM, the situation is a bit more complicated:
+The DFN provides publicly available guidelines\footnote{https://www.pki.dfn.de/fileadmin/PKI/DFN-PKI_CP.pdf} how to
+handle certificates.
+For email certificates it requires the \say{Authentification of a natural person} (cf.\ Section 3.2.3 in the linked
+document).
+This authentication needs to happen in-person (\say{persönliche Identitätsprüfung}), but not necessarily at the time of
+certification.
+
+An additional requirement for certification is the proper documentation of this procedure, which might need to be
+checked against current employment and matriculation practices at TUM\@.
+Most probably additional organizational convincing needs to happen, that a proposed \say{transfer} of checked identity
+can indeed happen via secure identity management systems within TUM\@.
 
 \section*{Future Work}
 To successfully implement the results, we and the working group \say{secure email} achieved, there are still a lot of
