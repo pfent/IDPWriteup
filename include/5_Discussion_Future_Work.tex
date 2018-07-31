@@ -1,39 +1,43 @@
 \chapter{Discussion and Future Work}\label{ch:futureWork}
 
-In this chapter, we discuss opportunities and limitations of our implementation when applied to be used at TUM.
+In this chapter, we discuss opportunities and limitations of our implementation when applied to be used at TUM\@.
 We also give an outlook on how our system can be used in production and extended for future applications.
 
 \section*{Discussion}
-% TODO: wie das neue System den Status Quo verbessert
-
-For TUM our implementation would be a huge improvement with regards to usability and accessibility.
-For majority of use cases, consolidate and replace existing systems.
-This has the advantage to make the process simpler, with less possible causes for confusion for the average user.
+For the situation at TUM our implementation would be a huge improvement with regards to usability and accessibility.
+It would consolidate and replace existing systems for majority of use cases, which makes the overall process much
+simpler.
+Instead of multiple ways to acquire certificates, our solution reduces the possible causes for confusion for average
+users.
 Since we can also eliminate most of the manual interaction, users can generate certificates much faster, which should
 increase encryption usage similar to how Let's Encrypt did for HTTPS usage.
 
-Additionally, we provide a interface, that is also comfortably usable on mobile devices, which was previously not
-available.
-We also provide users with a convenient and secure way to transfer private keys to their mobile devices.
+We additionally provide a interface, that is also comfortably usable on mobile devices.
+Since the previous system was not usable on mobile devices, this can increase the usage of encryption on mobile devices.
+We also provide users with a convenient and secure way to transfer private keys to their mobile devices, if they chose
+to generate their keys on a traditional computer.
 As many users see their mobile devices as the most prominent way to communicate this should have been a focus long ago.
 
-Security considerations:
-JS being delivered by backend.
-Also contains the code, that generates the private keys.
-Would enable the possibility for attacks, where the server delivers malicious code to the client, which then could
-compromise private keys.
+\subsection*{Security Considerations}
+With our approach of delivering the application and code by the backend, there is potential for attackers to insert
+malicious code.
+Since this code also contains routines to generate and handle private keys, this could potentially have fatal security
+consequences.
+Such a possible attack would be a server, which delivers malicious code to the client, which then compromises private
+keys.
 
-First counter-measure against man-in-the-middle attacks is HTTPS, so an attacker would need to compromise the server
-delivering the JS.
-Additionally, we provide the possibility to not use JS generated private keys, but only use the system to
-submit CSRs.
-Not ideal, since this is not a recommendable way for average users.
+In our system, we already applied some counter-measures, such as consequently using HTTPS against man-in-the-middle
+attacks is HTTPS, so an attacker would need to compromise the server's private keys first.
+Additionally, we provide an opt-out possibility to not use the frontend application to generate private keys, but only
+use the system to submit CSRs.
+We do not think this is a good solution, since this would reverse all accessibility features of our application.
 
 The most ideal counter-measure would be to have a fully reproducible build of the open-source
 frontend\footnote{\url{https://reproducible-builds.org/}}.
 This would allow anyone to independently audit the code and be sure the server only delivers that reproducibly built
 frontend.
-The security-aware users then only would need to compare a checksum of the code to be sure to execute legitimate code.
+The security-aware users then only would need to compare a checksum of the code to be sure to only execute legitimately
+non-malicious code.
 
 \subsection*{Limitations regarding certificate authorities}
 Most probably most organization's have sufficient identity checks when people join it should already comply with
